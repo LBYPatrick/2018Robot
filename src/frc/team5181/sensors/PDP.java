@@ -3,7 +3,6 @@ package frc.team5181.sensors;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team5181.Statics;
-import frc.team5181.robot.Statics;
 
 /**
  * Created by TylerLiu on 2017/03/14.

@@ -41,7 +41,7 @@ public class SocketControl extends Thread {
         public void run() {
 
             String readBuffer;
-            if(this.isConnectionAlive) {
+            while (this.isConnectionAlive) {
                 try {
 
                     /**

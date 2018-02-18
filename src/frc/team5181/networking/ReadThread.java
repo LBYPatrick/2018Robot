@@ -16,7 +16,7 @@ public class ReadThread extends Thread {
     }
 
     @Override
-    public void run() {
+    synchronized public void run() {
         try {
             while(true) {
                 try{

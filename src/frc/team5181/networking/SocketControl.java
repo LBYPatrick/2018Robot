@@ -14,6 +14,8 @@ public class SocketControl {
         private String readBuffer = new String();
         private String ip;
         private int port;
+        private Thread readThread;
+        private Thread writeThread;
         boolean isServer;
 
         public SocketControl(String ip, int port, boolean isServer) {
@@ -39,11 +41,13 @@ public class SocketControl {
         }
 
         public void startReading() {
-            new ReadThread(this.read, this.readBuffer).start();
+            this.readThread = new ReadThread(this.read, this.readBuffer);
+            this.readThread.start();
         }
 
         public void write(String msg) {
-            new WriteThread(this.write, msg).start();
+            this.writeThread = new WriteThread(this.write, msg);
+            this.readThread.start();
         }
 
         public String getData() {
@@ -52,6 +56,8 @@ public class SocketControl {
 
         public void stop() {
             try {
+                this.readThread.interrupt();
+                this.writeThread.interrupt();
                 this.s.close();
             } catch(IOException e) {
                 e.printStackTrace();

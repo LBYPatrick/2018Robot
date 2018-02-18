@@ -3,6 +3,7 @@ package frc.team5181.networking;
 import java.io.DataOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.net.SocketException;
 
 public class ReadThread extends Thread {
 
@@ -18,9 +19,13 @@ public class ReadThread extends Thread {
     public void run() {
         try {
             while(true) {
-                this.msg += this.din.readUTF();
+                try{
+                    this.msg += this.din.readUTF();
+                } catch (SocketException e) {break;} //Quit if Connection reset
             }
-        } catch(IOException e) {
+        }
+        catch(Exception e) {
+
             e.printStackTrace();
         }
     }

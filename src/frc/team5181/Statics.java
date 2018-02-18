@@ -8,10 +8,10 @@ public class Statics {
     final static public int DRIVE_LB = 1;
     final static public int DRIVE_RF = 2;
     final static public int DRIVE_RB = 3;
-    final static public int INTAKE_LEFT_MOTOR = 4;
-    final static public int INTAKE_RIGHT_MOTOR = 5;
-    final static public int SHOOTER_LEFT_MOTOR = 6;
-    final static public int SHOOTER_RIGHT_MOTOR = 7;
+    final static public int INTAKE_ARM_MOTORS = 4;
+    final static public int INTAKE_ROLLER_MOTORS = 5;
+    final static public int INDEX_MOTORS = 6;
+    final static public int SHOOTER_MOTORS = 7;
 
     final static public int INTAKE_COMPRESSOR = 0;
     final static public int INTAKE_SOLENOID_FORWARD = 0;
@@ -21,10 +21,14 @@ public class Statics {
     public static final int CAN_PRM = 1;
 
     //TODO change placeholders
-    public static final int PDP_Motor_LF = -1;
-    public static final int PDP_Motor_LB = -1;
-    public static final int PDP_Motor_RB = -1;
-    public static final int PDP_Motor_RF = -1;
+    public static final int PDP_Motor_LF = 0;
+    public static final int PDP_Motor_LB = 1;
+    public static final int PDP_Motor_RB = 15;
+    public static final int PDP_Motor_RF = 14;
+    final static public int PDP_INTAKE_ARM_MOTORS = 2;
+    final static public int PDP_INTAKE_ROLLER_MOTORS = 3;
+    final static public int PDP_INDEX_MOTORS = 13;
+    final static public int PDP_SHOOTER_MOTORS = 12;
 
     final static public int XBOX_CTRL = 0;
 

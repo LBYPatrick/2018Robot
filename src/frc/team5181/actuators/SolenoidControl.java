@@ -14,8 +14,8 @@ public class SolenoidControl {
     }
 
     public void move(boolean forward, boolean reverse) {
-        if((forward && reverse) || (!forward && !reverse)) solenoid.set(DoubleSolenoid.Value.kOff);
+        if((forward && reverse) || !(forward || reverse)) solenoid.set(DoubleSolenoid.Value.kOff);
         else if (forward) solenoid.set(DoubleSolenoid.Value.kForward);
-        else if (reverse) solenoid.set(DoubleSolenoid.Value.kReverse);
+        else solenoid.set(DoubleSolenoid.Value.kReverse);
     }
 }

@@ -30,7 +30,12 @@ final public class Gamepad { //Why final? Because then Java would try to final e
                        LB = false,
                        RB = false,
                        back = false,
-                       start = false;
+                       start = false,
+                       dPadUp = false,
+                       dPadDown = false,
+                       dPadLeft = false,
+                       dPadRight = false;
+
 
         //Joystick
         public boolean js_trigger = false;
@@ -59,6 +64,10 @@ final public class Gamepad { //Why final? Because then Java would try to final e
             this.RB = another.RB;
             this.back = another.back;
             this.start = another.start;
+            this.dPadUp = another.dPadUp;
+            this.dPadDown = another.dPadDown;
+            this.dPadLeft = another.dPadLeft;
+            this.dPadRight = another.dPadRight;
     
             //Joystick
             this.js_trigger = another.js_trigger;
@@ -109,7 +118,12 @@ final public class Gamepad { //Why final? Because then Java would try to final e
               js_y_state = false,
 
     //POV
-              POV_state = false;
+              POV_state = false,
+              dPadUp_state = false,
+              dPadDown_state = false,
+              dPadLeft_state = false,
+              dPadRight_state = false;
+
     
     //TODO redo mapping
 
@@ -161,7 +175,14 @@ final public class Gamepad { //Why final? Because then Java would try to final e
                 current.jRight  = xGP.getStickButton(Hand.kRight);
                 current.LT      = xGP.getTriggerAxis(Hand.kLeft);
                 current.RT      = xGP.getTriggerAxis(Hand.kRight);
-                current.dPad   = xGP.getPOV();
+                current.dPad    = xGP.getPOV();
+
+                if (current.dPad >= 0) {
+                    current.dPadRight = (current.dPad >= 45 && current.dPad <= 135);
+                    current.dPadDown = (current.dPad >= 135 && current.dPad <= 225);
+                    current.dPadLeft = (current.dPad >= 225 && current.dPad <= 315);
+                    current.dPadUp = current.dPad == 315 || current.dPad <= 45;
+                }
                 break;
             case JOYSTICK :
                 current.LT         = xGP.getTriggerAxis(Hand.kLeft);

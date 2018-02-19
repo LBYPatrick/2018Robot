@@ -1,23 +1,25 @@
 # FRC2018
 
-![HATSUME_MIKU_PIXIV](./Readme_image.jpg)
-
+![wlop_pic](./resources/readme_pic.jpg)  
+Artist: [@wlop](https://space.bilibili.com/26633150?from=search&seid=22684713911764996#/)
 
 Team 5181's Code for FRC 2018 Power up
 
 ## Contribution Guide
 
-Simple Rules:
+1. Fork this repository
 
-1. If you are not a `collborator/developer` of this repository,
-fork this repository and make sure to **frequently** pull commits
-from this one to your fork.
+2. Commit changes in your forked repository
 
-2. If you are a developer of this repository, just create a 
-branch and commit changes in the branch. 
+3. **(Recommended)** Try to squash the commits from you that do not have major changes on code.
 
-3. Don't forget to open a **Pull/Merge Request**! 
+4. Pull from our master branch and resolve conflicts.
+
+5. Open a **Pull/Merge Request** from your fork to our master branch, then you should be good to go. 
 
 ## Code Style
 
 Please Refer to [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html)
+
+## Setup for external libraries
+[Click Here](./resources/how_to_setup.md)

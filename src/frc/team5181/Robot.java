@@ -21,10 +21,10 @@ final public class Robot extends IterativeRobot {
 	private static boolean isSNP = false;  // Means "is Sniping Mode Triggered"
 	private static boolean isSolenoidForward = true;
 	private SolenoidControl intakeSoleniod;
-	private MotorControl intakeLeftMotor;
-	private MotorControl intakeRightMotor;
-	private MotorControl shooterLeft;
-	private MotorControl shooterRight;
+	private MotorControl intakeArmMotor;
+	private MotorControl intakeRollers;
+	private MotorControl indexs;
+	private MotorControl shooters;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -37,10 +37,9 @@ final public class Robot extends IterativeRobot {
         DriveTrain.init(Statics.DRIVE_LF,Statics.DRIVE_LB,Statics.DRIVE_RF,Statics.DRIVE_RB);
         Gamepad.init(Statics.XBOX_CTRL);
         intakeSoleniod = new SolenoidControl(Statics.INTAKE_COMPRESSOR,Statics.INTAKE_SOLENOID_FORWARD,Statics.INTAKE_SOLENOID_REVERSE);
-        intakeLeftMotor = new MotorControl(Statics.INTAKE_LEFT_MOTOR,MotorControl.Model.VICTOR_SP,true);
-        intakeRightMotor = new MotorControl(Statics.INTAKE_RIGHT_MOTOR,MotorControl.Model.VICTOR_SP,false);
-        shooterLeft = new MotorControl(Statics.SHOOTER_LEFT_MOTOR,MotorControl.Model.VICTOR_SP, false);
-        shooterRight = new MotorControl(Statics.SHOOTER_RIGHT_MOTOR,MotorControl.Model.VICTOR_SP, true);
+        intakeArmMotor = new MotorControl(Statics.INTAKE_ARM_MOTORS,MotorControl.Model.VICTOR_SP,false);
+        indexs = new MotorControl(Statics.INDEX_MOTORS,MotorControl.Model.VICTOR_SP, false);
+        shooters = new MotorControl(Statics.SHOOTER_MOTORS,MotorControl.Model.VICTOR_SP, true);
 	}
 
 	/**
@@ -104,15 +103,15 @@ final public class Robot extends IterativeRobot {
         	intakeSoleniod.move(isSolenoidForward, !isSolenoidForward);
 		}
 
-		if(Gamepad.X_state || Gamepad.Y_state) {
+		if(Gamepad.dPad_state) {
 
-			intakeLeftMotor.move(Gamepad.current.X,Gamepad.current.Y);
-			intakeRightMotor.move(Gamepad.current.X,Gamepad.current.Y);
+			intakeArmMotor.move(Gamepad.current.dPadUp,Gamepad.current.dPadDown);
+			intakeRollers.move(Gamepad.current.dPadUp,Gamepad.current.dPadDown);
 		}
 
 		if(Gamepad.A_state) {
-			shooterLeft.move(Gamepad.A_state,false);
-			shooterRight.move(Gamepad.A_state,false);
+			indexs.move(Gamepad.A_state,false);
+			shooters.move(Gamepad.A_state,false);
 		}
 
         /**

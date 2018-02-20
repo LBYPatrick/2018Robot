@@ -2,7 +2,8 @@ package frc.team5181;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import frc.team5181.actuators.*;
-import frc.team5181.autonomous.AutonChooser;
+import frc.team5181.autonomous.*;
+import frc.team5181.profiles.autonomous.*;
 import frc.team5181.tasking.Task;
 
 
@@ -25,6 +26,7 @@ final public class Robot extends IterativeRobot {
 	private MotorControl intakeRollers;
 	private MotorControl indexs;
 	private MotorControl shooters;
+	private AutonMode pickedAutonMode;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -33,13 +35,20 @@ final public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 
-		AutonChooser.chooserInit();
+		//Hardware
         DriveTrain.init(Statics.DRIVE_LF,Statics.DRIVE_LB,Statics.DRIVE_RF,Statics.DRIVE_RB);
         Gamepad.init(Statics.XBOX_CTRL);
         intakeSoleniod = new SolenoidControl(Statics.INTAKE_COMPRESSOR,Statics.INTAKE_SOLENOID_FORWARD,Statics.INTAKE_SOLENOID_REVERSE);
         intakeArmMotor = new MotorControl(Statics.INTAKE_ARM_MOTORS,MotorControl.Model.VICTOR_SP,false);
         indexs = new MotorControl(Statics.INDEX_MOTORS,MotorControl.Model.VICTOR_SP, false);
         shooters = new MotorControl(Statics.SHOOTER_MOTORS,MotorControl.Model.VICTOR_SP, true);
+
+        //Autonomous
+		AutonChooser.addOption("Position 1 (MoveOnly)", new AutonMoveOnly(1));
+		AutonChooser.addOption("Position 2 (MoveOnly)", new AutonMoveOnly(2));
+		AutonChooser.addOption("Position 3 (MoveOnly)", new AutonMoveOnly(3));
+		AutonChooser.updateDashBoard();
+
 	}
 
 	/**
@@ -56,7 +65,8 @@ final public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		autonCommand = AutonChooser.getAutonCommand();
+
+		pickedAutonMode = AutonChooser.getSelected();
 	}
 
 	/**
@@ -64,7 +74,7 @@ final public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		autonCommand.nextStep();
+		pickedAutonMode.run();
 	}
 
 	/**

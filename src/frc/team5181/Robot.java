@@ -38,11 +38,12 @@ final public class Robot extends IterativeRobot {
 		//Hardware
         DriveTrain.init(Statics.DRIVE_LF,Statics.DRIVE_LB,Statics.DRIVE_RF,Statics.DRIVE_RB);
         Gamepad.init(Statics.XBOX_CTRL);
-        intakeSoleniod = new SolenoidControl(Statics.INTAKE_COMPRESSOR,Statics.INTAKE_SOLENOID_FORWARD,Statics.INTAKE_SOLENOID_REVERSE);
-        intakeArmMotor = new MotorControl(Statics.INTAKE_ARM_MOTORS,MotorControl.Model.VICTOR_SP,false);
-        indexs = new MotorControl(Statics.INDEX_MOTORS,MotorControl.Model.VICTOR_SP, false);
-        shooters = new MotorControl(Statics.SHOOTER_MOTORS,MotorControl.Model.VICTOR_SP, true);
-
+        if(!Statics.TEST_CHASSIS_MODE) {
+			intakeSoleniod = new SolenoidControl(Statics.INTAKE_SOLENOID_FORWARD, Statics.INTAKE_SOLENOID_REVERSE);
+			intakeArmMotor = new MotorControl(Statics.INTAKE_ARM_MOTORS, MotorControl.Model.VICTOR_SP, false);
+			indexs = new MotorControl(Statics.INDEX_MOTORS, MotorControl.Model.VICTOR_SP, false);
+			shooters = new MotorControl(Statics.SHOOTER_MOTORS, MotorControl.Model.VICTOR_SP, true);
+		}
         //Autonomous
 		AutonChooser.addOption("Position 1 (MoveOnly)", new AutonMoveOnly(1));
 		AutonChooser.addOption("Position 2 (MoveOnly)", new AutonMoveOnly(2));
@@ -107,21 +108,23 @@ final public class Robot extends IterativeRobot {
 		/**
 		 * Soleniod Control using "A" button
 		 */
-		if(Gamepad.B_state) {
-        	if(Gamepad.current.B) isSolenoidForward = !isSolenoidForward;
+		if(!Statics.TEST_CHASSIS_MODE) {
+			if (Gamepad.B_state) {
+				if (Gamepad.current.B) isSolenoidForward = !isSolenoidForward;
 
-        	intakeSoleniod.move(isSolenoidForward, !isSolenoidForward);
-		}
+				intakeSoleniod.move(isSolenoidForward, !isSolenoidForward);
+			}
 
-		if(Gamepad.dPad_state) {
+			if (Gamepad.dPad_state) {
 
-			intakeArmMotor.move(Gamepad.current.dPadUp,Gamepad.current.dPadDown);
-			intakeRollers.move(Gamepad.current.dPadUp,Gamepad.current.dPadDown);
-		}
+				intakeArmMotor.move(Gamepad.current.dPadUp, Gamepad.current.dPadDown);
+				intakeRollers.move(Gamepad.current.dPadUp, Gamepad.current.dPadDown);
+			}
 
-		if(Gamepad.A_state) {
-			indexs.move(Gamepad.A_state,false);
-			shooters.move(Gamepad.A_state,false);
+			if (Gamepad.A_state) {
+				indexs.move(Gamepad.A_state, false);
+				shooters.move(Gamepad.A_state, false);
+			}
 		}
 
         /**

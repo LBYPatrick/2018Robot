@@ -13,9 +13,8 @@ public class Statics {
     final static public int INDEX_MOTORS = 6;
     final static public int SHOOTER_MOTORS = 7;
 
-    final static public int INTAKE_COMPRESSOR = 0;
-    final static public int INTAKE_SOLENOID_FORWARD = 0;
-    final static public int INTAKE_SOLENOID_REVERSE = 1;
+    final static public int INTAKE_SOLENOID_FORWARD = 1;
+    final static public int INTAKE_SOLENOID_REVERSE = 2;
 
     public static final int CAN_PDP = 0;
     public static final int CAN_PRM = 1;
@@ -30,10 +29,16 @@ public class Statics {
     final static public int PDP_INDEX_MOTORS = 13;
     final static public int PDP_SHOOTER_MOTORS = 12;
 
+    final static public int PDP_LED = 8;
+    final static public int PDP_VRM2= 10;
+    final static public int PDP_VRM3= 11;
+
     final static public int XBOX_CTRL = 0;
 
     final static public double LOW_SPD_FACTOR = 0.7;
 
     //Making this number greater than 1 = overclocking
     final static public double FULL_SPD_FACTOR = 1.0;
+
+    final static public boolean TEST_CHASSIS_MODE = true;
 }

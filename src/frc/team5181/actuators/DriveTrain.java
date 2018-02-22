@@ -4,38 +4,85 @@ import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team5181.pid.PIDTarget;
 
+import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * Created by TylerLiu on 2018/01/22.
  */
 public class DriveTrain {
     private static double speedLimit = 1.0;
-    private static Spark LF_Motor;
-    private static Spark LB_Motor;
-    private static Spark RF_Motor;
-    private static Spark RB_Motor;
+    private static MotorControl LF_Motor;
+    private static MotorControl LB_Motor;
+    private static MotorControl RF_Motor;
+    private static MotorControl RB_Motor;
     private static boolean is4WD;
+    final private static MotorControl.Model DEFAULT_MODEL = MotorControl.Model.SPARK;
 
-    public static void init(int LFMotorPort, int LBMotorPort,int RFMotorPort, int RBMotorPort) {
+    /**
+     * 4WD Constructor
+     * @param LFMotorPort
+     * @param LBMotorPort
+     * @param RFMotorPort
+     * @param RBMotorPort
+     * @param modelList    list of motor models (From back to front, left to right)
+     */
+    public static void init(int LFMotorPort,
+                            int LBMotorPort,
+                            int RFMotorPort,
+                            int RBMotorPort,
+                            ArrayList<MotorControl.Model> modelList) {
         is4WD = true;
-        LB_Motor = new Spark(LBMotorPort);
-        RB_Motor = new Spark(RBMotorPort);
-        LF_Motor = new Spark(LFMotorPort);
-        RF_Motor = new Spark(RFMotorPort);
-
-        LF_Motor.setInverted(false);
-        LB_Motor.setInverted(false);
-        RF_Motor.setInverted(true);
-        RB_Motor.setInverted(true);
+        LB_Motor = new MotorControl(LBMotorPort,modelList.get(0),false);
+        RB_Motor = new MotorControl(RBMotorPort,modelList.get(1),true);
+        LF_Motor = new MotorControl(LFMotorPort,modelList.get(2),false);
+        RF_Motor = new MotorControl(RFMotorPort,modelList.get(3), true);
     }
 
+    /**
+     * Overloaded 4WD Constructor, uses DEFAULT_MODEL
+     * @param LFMotorPort
+     * @param LBMotorPort
+     * @param RFMotorPort
+     * @param RBMotorPort
+     */
+    public static void init(int LFMotorPort, int LBMotorPort,int RFMotorPort, int RBMotorPort) {
+
+        init(LFMotorPort,
+                LBMotorPort,
+                RFMotorPort,
+                RBMotorPort,
+                new ArrayList<MotorControl.Model>(
+                        Arrays.asList(DEFAULT_MODEL,DEFAULT_MODEL,DEFAULT_MODEL,DEFAULT_MODEL)
+                )
+        );
+    }
+
+    /**
+     * 2WD Constructor
+     * @param leftMotorPort
+     * @param rightMotorPort
+     * @param leftModel
+     * @param rightModel
+     */
+    public static void init(int leftMotorPort, int rightMotorPort, MotorControl.Model leftModel, MotorControl.Model rightModel) {
+        is4WD = false;
+        LB_Motor = new MotorControl(leftMotorPort, leftModel,false);
+        RB_Motor = new MotorControl(rightMotorPort, rightModel,true);
+    }
+
+    /**
+     * Overloaded 2WD Constructor,uses DEFAULT_MODEL
+     * @param leftMotorPort
+     * @param rightMotorPort
+     */
     public static void init(int leftMotorPort, int rightMotorPort) {
         is4WD = false;
-        LB_Motor = new Spark(leftMotorPort);
-        RB_Motor = new Spark(rightMotorPort);
-
-        LB_Motor.setInverted(false);
-        RB_Motor.setInverted(true);
+        LB_Motor = new MotorControl(leftMotorPort, DEFAULT_MODEL,false);
+        RB_Motor = new MotorControl(rightMotorPort, DEFAULT_MODEL,true);
     }
+
     /**
      * tankDrive method
      *
@@ -50,12 +97,12 @@ public class DriveTrain {
         final double rightPower = clipValue(yVal - xVal, -1.0, 1.0);
 
         //Pass calculated power level to motors
-        LB_Motor.set(getLimitedSpeed(leftPower));
-        RB_Motor.set(getLimitedSpeed(rightPower));
+        LB_Motor.move(getLimitedSpeed(leftPower));
+        RB_Motor.move(getLimitedSpeed(rightPower));
 
         if(is4WD) {
-            LF_Motor.set(getLimitedSpeed(leftPower));
-            RF_Motor.set(getLimitedSpeed(rightPower));
+            LF_Motor.move(getLimitedSpeed(leftPower));
+            RF_Motor.move(getLimitedSpeed(rightPower));
         }
     }
 
@@ -76,10 +123,10 @@ public class DriveTrain {
         double r = Math.hypot(sideMove, forwardBack);
         double robotAngle = Math.atan2(forwardBack, sideMove) - Math.PI / 4;
 
-        LF_Motor.set(getLimitedSpeed(r * Math.cos(robotAngle) + rotation));
-        RF_Motor.set(getLimitedSpeed(r * Math.sin(robotAngle) - rotation));
-        LB_Motor.set(getLimitedSpeed(r * Math.sin(robotAngle) + rotation));
-        RB_Motor.set(getLimitedSpeed(r * Math.cos(robotAngle) - rotation));
+        LF_Motor.move(getLimitedSpeed(r * Math.cos(robotAngle) + rotation));
+        RF_Motor.move(getLimitedSpeed(r * Math.sin(robotAngle) - rotation));
+        LB_Motor.move(getLimitedSpeed(r * Math.sin(robotAngle) + rotation));
+        RB_Motor.move(getLimitedSpeed(r * Math.cos(robotAngle) - rotation));
     }
 
     /**

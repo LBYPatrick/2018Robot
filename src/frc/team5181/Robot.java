@@ -6,6 +6,9 @@ import frc.team5181.autonomous.*;
 import frc.team5181.profiles.autonomous.*;
 import frc.team5181.tasking.Task;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -36,7 +39,14 @@ final public class Robot extends IterativeRobot {
 	public void robotInit() {
 
 		//Hardware
-        DriveTrain.init(Statics.DRIVE_LF,Statics.DRIVE_LB,Statics.DRIVE_RF,Statics.DRIVE_RB);
+        DriveTrain.init(Statics.DRIVE_LF,Statics.DRIVE_LB,Statics.DRIVE_RF,Statics.DRIVE_RB,
+				new ArrayList<>(
+						Arrays.asList(MotorControl.Model.VICTOR_SP,
+								      MotorControl.Model.TALON_SRX,
+									  MotorControl.Model.VICTOR_SP,
+								      MotorControl.Model.TALON_SRX))
+		);
+
         Gamepad.init(Statics.XBOX_CTRL);
         if(!Statics.TEST_CHASSIS_MODE) {
 			intakeSoleniod = new SolenoidControl(Statics.INTAKE_SOLENOID_FORWARD, Statics.INTAKE_SOLENOID_REVERSE);

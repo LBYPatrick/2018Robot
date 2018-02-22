@@ -138,10 +138,10 @@ final public class Robot extends IterativeRobot {
 		}
 
         /**
-         *  NFS Drive Control. (R2 for forward, L2 for back, Left Joystick for turning)
+         *  Drive Control.
          */
-        if(Gamepad.RT_state || Gamepad.LT_state || Gamepad.jLeftX_state) {
-            DriveTrain.tankDrive(rFactor*Gamepad.current.jLeftX,rFactor*(Gamepad.current.RT-Gamepad.current.LT));
+        if(Gamepad.jLeftY_state || Gamepad.jLeftX_state) {
+            DriveTrain.tankDrive(rFactor*Gamepad.current.jLeftX,rFactor*(Gamepad.current.jLeftY));
         }
 
 	}

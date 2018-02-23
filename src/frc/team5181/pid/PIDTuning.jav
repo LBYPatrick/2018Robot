@@ -1,6 +1,6 @@
 package frc.team5181.pid;
 
-import frc.team5181.sensors.Gamepad;
+import frc.team5181.Gamepad;
 import frc.team5181.actuators.DriveTrain;
 import frc.team5181.sensors.WheelEncoders;
 import edu.wpi.first.wpilibj.DriverStation;

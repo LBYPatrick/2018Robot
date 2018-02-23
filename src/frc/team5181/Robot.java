@@ -1,9 +1,10 @@
 package frc.team5181;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
-import frc.team5181.autonomous.AutonChooser;
+import frc.team5181.actuators.*;
+import frc.team5181.autonomous.*;
+import frc.team5181.profiles.autonomous.*;
 import frc.team5181.tasking.Task;
-
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -13,7 +14,19 @@ import frc.team5181.tasking.Task;
  * directory.
  */
 final public class Robot extends IterativeRobot {
-	Task autonCommand;
+	private Task autonCommand;
+	private static int rFactor = 1;
+	private static double speedFactor = 1.0;
+	private static boolean isRVSE = false; // Means "is Reverse Mode Triggered"
+	private static boolean isSNP = false;  // Means "is Sniping Mode Triggered"
+	private static boolean isSolenoidForward = true;
+	private SolenoidControl intakeSoleniod;
+	private MotorControl intakeArmMotor;
+	private MotorControl intakeRollers;
+	private MotorControl indexs;
+	private MotorControl shooters;
+	private AutonMode pickedAutonMode;
+
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
@@ -21,7 +34,23 @@ final public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 
-		AutonChooser.chooserInit();
+		//Hardware
+        DriveTrain.init(Statics.DRIVE_LF,Statics.DRIVE_LB,Statics.DRIVE_RF,Statics.DRIVE_RB);
+
+        Gamepad.init(Statics.XBOX_CTRL);
+        if(!Statics.TEST_CHASSIS_MODE) {
+			intakeSoleniod = new SolenoidControl(Statics.INTAKE_SOLENOID_FORWARD, Statics.INTAKE_SOLENOID_REVERSE);
+			intakeArmMotor = new MotorControl(Statics.INTAKE_ARM_MOTORS, false);
+			intakeRollers  = new MotorControl(Statics.INTAKE_ROLLER_MOTORS,false);
+			indexs = new MotorControl(Statics.INDEX_MOTORS, false);
+			shooters = new MotorControl(Statics.SHOOTER_MOTORS, true);
+		}
+        //Autonomous
+		AutonChooser.addOption("Position 1 (MoveOnly)", new AutonMoveOnly(1));
+		AutonChooser.addOption("Position 2 (MoveOnly)", new AutonMoveOnly(2));
+		AutonChooser.addOption("Position 3 (MoveOnly)", new AutonMoveOnly(3));
+		AutonChooser.updateDashBoard();
+
 	}
 
 	/**
@@ -38,7 +67,8 @@ final public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		autonCommand = AutonChooser.getAutonCommand();
+
+		pickedAutonMode = AutonChooser.getSelected();
 	}
 
 	/**
@@ -46,7 +76,7 @@ final public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		autonCommand.nextStep();
+		pickedAutonMode.run();
 	}
 
 	/**
@@ -54,6 +84,57 @@ final public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+
+        Gamepad.updateStatus();
+
+        /**
+         * Reverse Gear Trigger (Button Y, AKA "Triangle" in Dualshock 4)
+         */
+        if(Gamepad.LB_state) {
+            if(Gamepad.current.LB) isRVSE = !isRVSE;
+            rFactor = isRVSE ? -1 : 1;
+        }
+
+        /**
+         *  Sniping Mode (First introduced for Team 11319 in FTC 2017 Relic Recovery)
+         *  Use Right Bumper for toggling
+         */
+        if(Gamepad.RB_state) {
+            if(Gamepad.current.RB) isSNP = !isSNP;
+            speedFactor = isSNP ? Statics.LOW_SPD_FACTOR : Statics.FULL_SPD_FACTOR;
+
+            DriveTrain.updateSpeedLimit(speedFactor);
+        }
+
+		/**
+		 * Soleniod Control using "A" button
+		 */
+		if(!Statics.TEST_CHASSIS_MODE) {
+			if (Gamepad.B_state) {
+				if (Gamepad.current.B) isSolenoidForward = !isSolenoidForward;
+
+				intakeSoleniod.move(isSolenoidForward, !isSolenoidForward);
+			}
+
+			if (Gamepad.dPad_state) {
+
+				intakeArmMotor.move(Gamepad.current.dPadUp, Gamepad.current.dPadDown);
+				intakeRollers.move(Gamepad.current.dPadUp, Gamepad.current.dPadDown);
+			}
+
+			if (Gamepad.A_state) {
+				indexs.move(Gamepad.A_state, false);
+				shooters.move(Gamepad.A_state, false);
+			}
+		}
+
+        /**
+         *  Drive Control.
+         */
+        if(Gamepad.jLeftY_state || Gamepad.jLeftX_state) {
+            DriveTrain.tankDrive(rFactor*Gamepad.current.jLeftX,rFactor*(Gamepad.current.jLeftY));
+        }
+
 	}
 
 	/**

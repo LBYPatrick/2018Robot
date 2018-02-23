@@ -6,6 +6,8 @@ import frc.team5181.autonomous.*;
 import frc.team5181.profiles.autonomous.*;
 import frc.team5181.tasking.Task;
 
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -26,6 +28,7 @@ final public class Robot extends IterativeRobot {
 	private MotorControl indexs;
 	private MotorControl shooters;
 	private AutonMode pickedAutonMode;
+	private PowerDistributionPanel pdp;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -34,6 +37,7 @@ final public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 
+		this.pdp = new PowerDistributionPanel();
 		//Hardware
         DriveTrain.init(Statics.DRIVE_LF,Statics.DRIVE_LB,Statics.DRIVE_RF,Statics.DRIVE_RB);
 

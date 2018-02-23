@@ -12,9 +12,10 @@ public class MotorControl {
     private PWMSpeedController motor;
     private double speedLimit = 1.0;
     private Model model;
+    public static Model DEFAULT_MODEL = Model.VICTOR_SP;
 
     public MotorControl (int port) {
-        this(port, Model.SPARK);
+        this(port, DEFAULT_MODEL);
     }
 
     public MotorControl (int port, Model model) {
@@ -22,13 +23,11 @@ public class MotorControl {
     }
 
     public MotorControl (int port, boolean isReverse) {
-        this(port, Model.SPARK, isReverse);
+        this(port, DEFAULT_MODEL, isReverse);
     }
 
     public MotorControl (int port, Model motorModel,boolean isReverse) {
-
         this.model = motorModel;
-
         switch(motorModel) {
             case TALON_SRX:
                 this.motor = new Talon(port);
@@ -46,7 +45,7 @@ public class MotorControl {
         this.motor.setInverted(isReverse);
     }
 
-    public void setSpeedLimit(double newSpeedLimit) {
+    public void updateSpeedLimit(double newSpeedLimit) {
         this.speedLimit = newSpeedLimit;
     }
 

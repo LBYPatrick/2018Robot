@@ -13,11 +13,8 @@ public class Statics {
     final static public int INDEX_MOTORS = 6;
     final static public int SHOOTER_MOTORS = 7;
 
-    final static public int INTAKE_SOLENOID_FORWARD = 1;
-    final static public int INTAKE_SOLENOID_REVERSE = 2;
-
-    public static final int CAN_PDP = 0;
-    public static final int CAN_PRM = 1;
+    final static public int INTAKE_SOLENOID_FORWARD = 0;
+    final static public int INTAKE_SOLENOID_REVERSE = 1;
 
     //TODO change placeholders
     public static final int PDP_Motor_LF = 0;

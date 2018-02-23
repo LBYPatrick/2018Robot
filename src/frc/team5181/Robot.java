@@ -6,10 +6,6 @@ import frc.team5181.autonomous.*;
 import frc.team5181.profiles.autonomous.*;
 import frc.team5181.tasking.Task;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
-
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -39,20 +35,15 @@ final public class Robot extends IterativeRobot {
 	public void robotInit() {
 
 		//Hardware
-        DriveTrain.init(Statics.DRIVE_LF,Statics.DRIVE_LB,Statics.DRIVE_RF,Statics.DRIVE_RB,
-				new ArrayList<>(
-						Arrays.asList(MotorControl.Model.VICTOR_SP,
-								      MotorControl.Model.TALON_SRX,
-									  MotorControl.Model.VICTOR_SP,
-								      MotorControl.Model.TALON_SRX))
-		);
+        DriveTrain.init(Statics.DRIVE_LF,Statics.DRIVE_LB,Statics.DRIVE_RF,Statics.DRIVE_RB);
 
         Gamepad.init(Statics.XBOX_CTRL);
         if(!Statics.TEST_CHASSIS_MODE) {
 			intakeSoleniod = new SolenoidControl(Statics.INTAKE_SOLENOID_FORWARD, Statics.INTAKE_SOLENOID_REVERSE);
-			intakeArmMotor = new MotorControl(Statics.INTAKE_ARM_MOTORS, MotorControl.Model.VICTOR_SP, false);
-			indexs = new MotorControl(Statics.INDEX_MOTORS, MotorControl.Model.VICTOR_SP, false);
-			shooters = new MotorControl(Statics.SHOOTER_MOTORS, MotorControl.Model.VICTOR_SP, true);
+			intakeArmMotor = new MotorControl(Statics.INTAKE_ARM_MOTORS, false);
+			intakeRollers  = new MotorControl(Statics.INTAKE_ROLLER_MOTORS,false);
+			indexs = new MotorControl(Statics.INDEX_MOTORS, false);
+			shooters = new MotorControl(Statics.SHOOTER_MOTORS, true);
 		}
         //Autonomous
 		AutonChooser.addOption("Position 1 (MoveOnly)", new AutonMoveOnly(1));

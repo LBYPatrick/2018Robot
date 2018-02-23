@@ -15,7 +15,7 @@ public class DriveTrain {
     private static MotorControl RF_Motor;
     private static MotorControl RB_Motor;
     private static boolean is4WD;
-    final private static MotorControl.Model DEFAULT_MODEL = MotorControl.Model.SPARK;
+    final private static MotorControl.Model DEFAULT_MODEL = MotorControl.Model.VICTOR_SP;
 
     /**
      * 4WD Constructor
@@ -50,7 +50,7 @@ public class DriveTrain {
                 LBMotorPort,
                 RFMotorPort,
                 RBMotorPort,
-                new ArrayList<MotorControl.Model>(
+                new ArrayList<>(
                         Arrays.asList(DEFAULT_MODEL,DEFAULT_MODEL,DEFAULT_MODEL,DEFAULT_MODEL)
                 )
         );

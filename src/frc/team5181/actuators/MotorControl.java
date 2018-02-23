@@ -1,23 +1,21 @@
 package frc.team5181.actuators;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.VictorSP;
-import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.*;
 
 public class MotorControl {
     public enum Model {
+        TALON_SRX,
         VICTOR_SP,
         SPARK,
         VICTOR,
     }
-
-    private VictorSP vsp;
-    private Spark spark;
+    private PWMSpeedController motor;
     private double speedLimit = 1.0;
     private Model model;
+    public static Model DEFAULT_MODEL = Model.VICTOR_SP;
 
     public MotorControl (int port) {
-        this(port, Model.SPARK);
+        this(port, DEFAULT_MODEL);
     }
 
     public MotorControl (int port, Model model) {
@@ -25,43 +23,35 @@ public class MotorControl {
     }
 
     public MotorControl (int port, boolean isReverse) {
-        this(port, Model.SPARK, isReverse);
+        this(port, DEFAULT_MODEL, isReverse);
     }
 
     public MotorControl (int port, Model motorModel,boolean isReverse) {
-
         this.model = motorModel;
-
         switch(motorModel) {
+            case TALON_SRX:
+                this.motor = new Talon(port);
+                break;
             case VICTOR:
+                this.motor = new Victor(port);
+                break;
             case VICTOR_SP:
-                this.vsp = new VictorSP(port);
-                this.vsp.setInverted(isReverse);
+                this.motor = new VictorSP(port);
                 break;
             case SPARK:
-                this.spark = new Spark(port);
-                this.spark.setInverted(isReverse);
+                this.motor = new Spark(port);
             default : break;
         }
+        this.motor.setInverted(isReverse);
     }
 
-    public void setSpeedLimit(double newSpeedLimit) {
+    public void updateSpeedLimit(double newSpeedLimit) {
         this.speedLimit = newSpeedLimit;
     }
 
 
     public void move(double value) {
-
-        switch(this.model) {
-            case VICTOR:
-            case VICTOR_SP:
-                this.vsp.set(value*speedLimit);
-                break;
-            case SPARK:
-                this.spark.set(value*speedLimit);
-                break;
-            default: break;
-        }
+        this.motor.set(value*speedLimit);
     }
 
     public void move(boolean forward, boolean reverse) {

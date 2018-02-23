@@ -8,8 +8,8 @@ public class SolenoidControl {
     Compressor compressor;
     DoubleSolenoid solenoid;
 
-    public SolenoidControl(int compressorPort, int soleniodForwardPort, int solenoidReversePort) {
-        this.compressor = new Compressor(compressorPort);
+    public SolenoidControl(int soleniodForwardPort, int solenoidReversePort) {
+        this.compressor = new Compressor();
         this.solenoid = new DoubleSolenoid(soleniodForwardPort, solenoidReversePort);
     }
 

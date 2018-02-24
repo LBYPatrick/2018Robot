@@ -1,10 +1,11 @@
 package frc.team5181;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team5181.actuators.*;
-import frc.team5181.autonomous.*;
-import frc.team5181.profiles.autonomous.*;
 import frc.team5181.tasking.Task;
+import frc.team5181.sensors.IRSensor;
+import frc.team5181.autonomous.AutonChooser;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
@@ -27,8 +28,8 @@ final public class Robot extends IterativeRobot {
 	private MotorControl intakeRollers;
 	private MotorControl indexs;
 	private MotorControl shooters;
-	private AutonMode pickedAutonMode;
 	private PowerDistributionPanel pdp;
+	private IRSensor irCage;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -38,6 +39,7 @@ final public class Robot extends IterativeRobot {
 	public void robotInit() {
 
 		this.pdp = new PowerDistributionPanel();
+		this.irCage = new IRSensor(Statics.CAGE_IR_SENSOR,0.2);
 		//Hardware
         DriveTrain.init(Statics.DRIVE_LF,Statics.DRIVE_LB,Statics.DRIVE_RF,Statics.DRIVE_RB);
 
@@ -49,12 +51,6 @@ final public class Robot extends IterativeRobot {
 			indexs = new MotorControl(Statics.INDEX_MOTORS, false);
 			shooters = new MotorControl(Statics.SHOOTER_MOTORS, true);
 		}
-        //Autonomous
-		AutonChooser.addOption("Position 1 (MoveOnly)", new AutonMoveOnly(1));
-		AutonChooser.addOption("Position 2 (MoveOnly)", new AutonMoveOnly(2));
-		AutonChooser.addOption("Position 3 (MoveOnly)", new AutonMoveOnly(3));
-		AutonChooser.updateDashBoard();
-
 	}
 
 	/**
@@ -71,8 +67,7 @@ final public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-
-		pickedAutonMode = AutonChooser.getSelected();
+		AutonChooser.chooserInit();
 	}
 
 	/**
@@ -80,7 +75,6 @@ final public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		pickedAutonMode.run();
 	}
 
 	/**
@@ -88,27 +82,40 @@ final public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+		this.teleopControl(false);
+		this.postSensorData();
+	}
 
-        Gamepad.updateStatus();
+	/**
+	 * This function is called periodically during test mode
+	 */
+	@Override
+	public void testPeriodic() {
+		this.teleopControl(true);
+		this.postSensorData();
+	}
 
-        /**
-         * Reverse Gear Trigger (Button Y, AKA "Triangle" in Dualshock 4)
-         */
-        if(Gamepad.LB_state) {
-            if(Gamepad.current.LB) isRVSE = !isRVSE;
-            rFactor = isRVSE ? -1 : 1;
-        }
+	public void teleopControl(boolean isNFSControl) {
+		Gamepad.updateStatus();
 
-        /**
-         *  Sniping Mode (First introduced for Team 11319 in FTC 2017 Relic Recovery)
-         *  Use Right Bumper for toggling
-         */
-        if(Gamepad.RB_state) {
-            if(Gamepad.current.RB) isSNP = !isSNP;
-            speedFactor = isSNP ? Statics.LOW_SPD_FACTOR : Statics.FULL_SPD_FACTOR;
+		/**
+		 * Reverse Gear Trigger (Button Y, AKA "Triangle" in Dualshock 4)
+		 */
+		if(Gamepad.LB_state) {
+			if(Gamepad.current.LB) isRVSE = !isRVSE;
+			rFactor = isRVSE ? -1 : 1;
+		}
 
-            DriveTrain.updateSpeedLimit(speedFactor);
-        }
+		/**
+		 *  Sniping Mode (First introduced for Team 11319 in FTC 2017 Relic Recovery)
+		 *  Use Right Bumper for toggling
+		 */
+		if(Gamepad.RB_state) {
+			if(Gamepad.current.RB) isSNP = !isSNP;
+			speedFactor = isSNP ? Statics.LOW_SPD_FACTOR : Statics.FULL_SPD_FACTOR;
+
+			DriveTrain.updateSpeedLimit(speedFactor);
+		}
 
 		/**
 		 * Soleniod Control using "A" button
@@ -132,20 +139,22 @@ final public class Robot extends IterativeRobot {
 			}
 		}
 
-        /**
-         *  Drive Control.
-         */
-        if(Gamepad.jLeftY_state || Gamepad.jLeftX_state) {
-            DriveTrain.tankDrive(rFactor*Gamepad.current.jLeftX,rFactor*(Gamepad.current.jLeftY));
-        }
-
+		/**
+		 *  RC Drive Control
+		 */
+		if(!isNFSControl && (Gamepad.jLeftY_state || Gamepad.jRightX_state)) {
+			DriveTrain.tankDrive(Gamepad.current.jRightX,rFactor*(Gamepad.current.jLeftY));
+		}
+		/**
+		 * NFS Drive Control (Might improve driving experience + less likely wearing out the gearboxes due to rapid speed change)
+		 */
+		else if(Gamepad.RT_state || Gamepad.LT_state) {
+			DriveTrain.tankDrive(Gamepad.current.jLeftX, rFactor*(Gamepad.current.RT-Gamepad.current.LT));
+		}
 	}
 
-	/**
-	 * This function is called periodically during test mode
-	 */
-	@Override
-	public void testPeriodic() {
+	public void postSensorData() {
+		SmartDashboard.putBoolean("Is cube in cage", this.irCage.isTargetDetected());
 	}
 }
 

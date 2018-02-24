@@ -6,25 +6,36 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team5181.tasking.ParallelTask;
 import frc.team5181.tasking.Task;
 
+/**
+ * Created by TylerLiu on 2017/03/04.
+ */
 public class AutonChooser {
 
-    private static SendableChooser<AutonMode> chooser = new SendableChooser<>();
+    public static SendableChooser<String> chooser;
 
-    public static void addOption(String name,AutonMode obj) {
-        chooser.addObject(name,obj);
+    private static void chooserAdd(String commandName){
+        chooser.addObject(commandName,commandName);
     }
-
-    public static void updateDashBoard() {
-        SmartDashboard.putData("AUTON_MODES",chooser);
+    
+    public static void chooserInit(){
+        chooser = new SendableChooser<>();
+        chooserAdd("Left");
+        chooserAdd("Middle");
+        chooserAdd("Right");
+        SmartDashboard.putData("Auton Chooser", chooser);
     }
-
-    public static AutonMode getSelected() {
-        return chooser.getSelected();
+    
+    public static Task getAutonCommand(){
+        DriverStation.reportWarning(chooser.getSelected(), false);
+        switch (chooser.getSelected()) {
+            case "Left" :
+                return new ParallelTask(); //Do Nothing
+            case "Middle" :
+                return null;
+            case "Right" :
+                return null;
+            default:
+                throw new RuntimeException();
+        }
     }
-
-    public static void run(AutonMode autonMode) {
-        autonMode.init();
-        autonMode.run();
-    }
-
 }

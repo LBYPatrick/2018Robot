@@ -87,7 +87,7 @@ public class DriveTrain {
      * @param yVal  y value of the stick (For forward & back)
      */
     public static void tankDrive(double xVal, double yVal) {
-        xVal = -xVal; // FTC 2018 tuning (Probably Also for FRC 2018? LOL)
+        yVal = -yVal; //FRC & FTC 2018 Tuning
 
         //Calculate Adequate Power Level for motors
         final double leftPower  = clipValue(yVal + xVal, -1.0, 1.0);

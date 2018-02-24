@@ -1,0 +1,5 @@
+sudo: required
+language: java
+before-script: javac -version
+script: ant -find compile.xml
+jdk: oraclejdk8

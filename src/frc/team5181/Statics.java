@@ -4,6 +4,7 @@ public class Statics {
     final static public String DEFAULT_AUTO = "Default";
     final static public String CUSTOM_AUTO  = "My Auto";
 
+    //PWM
     final static public int DRIVE_LF = 0;
     final static public int DRIVE_LB = 1;
     final static public int DRIVE_RF = 2;
@@ -12,11 +13,13 @@ public class Statics {
     final static public int INTAKE_ROLLER_MOTORS = 5;
     final static public int INDEX_MOTORS = 6;
     final static public int SHOOTER_MOTORS = 7;
-
     final static public int INTAKE_SOLENOID_FORWARD = 0;
     final static public int INTAKE_SOLENOID_REVERSE = 1;
 
-    //TODO change placeholders
+    //Analog
+    final static public int CAGE_IR_SENSOR = 0;
+
+    //PDP
     public static final int PDP_Motor_LF = 0;
     public static final int PDP_Motor_LB = 1;
     public static final int PDP_Motor_RB = 15;

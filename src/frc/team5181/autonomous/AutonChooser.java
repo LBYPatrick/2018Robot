@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team5181.tasking.ParallelTask;
+import frc.team5181.tasking.SyncTask;
 import frc.team5181.tasking.Task;
 
 /**
@@ -22,6 +23,7 @@ public class AutonChooser {
         chooserAdd("Left");
         chooserAdd("Middle");
         chooserAdd("Right");
+        chooserAdd("Move only(Pass Autoline, let others work)");
         SmartDashboard.putData("Auton Chooser", chooser);
     }
     
@@ -29,11 +31,13 @@ public class AutonChooser {
         DriverStation.reportWarning(chooser.getSelected(), false);
         switch (chooser.getSelected()) {
             case "Left" :
-                return new ParallelTask(); //Do Nothing
+                return new SyncTask(new AutonTimeBased(AutonTimeBased.Left)); //Do Nothing
             case "Middle" :
-                return null;
+                return new SyncTask(new AutonTimeBased(AutonTimeBased.Middle));
             case "Right" :
-                return null;
+                return new SyncTask(new AutonTimeBased(AutonTimeBased.Right));
+            case "Move only(Pass Autoline, let others work)":
+                return new SyncTask(new AutonTimeBased(647));
             default:
                 throw new RuntimeException();
         }

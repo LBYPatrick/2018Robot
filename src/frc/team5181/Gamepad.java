@@ -182,6 +182,11 @@ final public class Gamepad { //Why final? Because then Java would try to final e
                     current.dPadDown = (current.dPad >= 135 && current.dPad <= 225);
                     current.dPadLeft = (current.dPad >= 225 && current.dPad <= 315);
                     current.dPadUp = current.dPad == 315 || current.dPad <= 45;
+                } else { //The DPAD was not even used
+                    current.dPadUp = false;
+                    current.dPadDown = false;
+                    current.dPadLeft = false;
+                    current.dPadRight = false;
                 }
                 break;
             case JOYSTICK :

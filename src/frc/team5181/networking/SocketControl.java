@@ -11,11 +11,10 @@ public class SocketControl {
         private Socket s;
         private DataInputStream read;
         private DataOutputStream write;
-        private String readBuffer = new String();
         private String ip;
         private int port;
-        private Thread readThread;
-        private Thread writeThread;
+        private ReadThread readThread;
+        private WriteThread writeThread;
         boolean isServer;
 
         public SocketControl(String ip, int port, boolean isServer) {
@@ -41,7 +40,7 @@ public class SocketControl {
         }
 
         public void startReading() {
-            this.readThread = new ReadThread(this.read, this.readBuffer);
+            this.readThread = new ReadThread(this.read);
             this.readThread.start();
         }
 
@@ -50,9 +49,7 @@ public class SocketControl {
             this.readThread.start();
         }
 
-        public String getData() {
-            return this.readBuffer;
-        }
+        public String getData() { return this.readThread.getMessage(); }
 
         public void stop() {
             try {

@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team5181.actuators.*;
 import frc.team5181.tasking.Task;
 import frc.team5181.sensors.IRSensor;
-import frc.team5181.autonomous.AutonChooser;
+import frc.team5181.autonomous.*;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
@@ -42,8 +42,8 @@ final public class Robot extends IterativeRobot {
 		this.irCage = new IRSensor(Statics.CAGE_IR_SENSOR,0.2);
 		//Hardware
         DriveTrain.init(Statics.DRIVE_LF,Statics.DRIVE_LB,Statics.DRIVE_RF,Statics.DRIVE_RB);
-
         Gamepad.init(Statics.XBOX_CTRL);
+
         if(!Statics.TEST_CHASSIS_MODE) {
 			intakeSoleniod = new SolenoidControl(Statics.INTAKE_SOLENOID_FORWARD, Statics.INTAKE_SOLENOID_REVERSE);
 			intakeArmMotor = new MotorControl(Statics.INTAKE_ARM_MOTORS, false);
@@ -51,6 +51,8 @@ final public class Robot extends IterativeRobot {
 			indexs = new MotorControl(Statics.INDEX_MOTORS, false);
 			shooters = new MotorControl(Statics.SHOOTER_MOTORS, true);
 		}
+
+		AutonHelper.init(shooters); //Pass shooter to AutonHelper
 	}
 
 	/**
@@ -129,8 +131,8 @@ final public class Robot extends IterativeRobot {
 
 			if (Gamepad.dPad_state) {
 
-				intakeArmMotor.move(Gamepad.current.dPadUp, Gamepad.current.dPadDown);
-				intakeRollers.move(Gamepad.current.dPadUp, Gamepad.current.dPadDown);
+				intakeArmMotor.move(Gamepad.current.dPadDown, Gamepad.current.dPadUp);
+				intakeRollers.move(Gamepad.current.dPadDown, Gamepad.current.dPadUp);
 			}
 
 			if (Gamepad.A_state) {
@@ -148,7 +150,7 @@ final public class Robot extends IterativeRobot {
 		/**
 		 * NFS Drive Control (Might improve driving experience + less likely wearing out the gearboxes due to rapid speed change)
 		 */
-		else if(Gamepad.RT_state || Gamepad.LT_state) {
+		else if(Gamepad.RT_state || Gamepad.LT_state || Gamepad.jLeftX_state) {
 			DriveTrain.tankDrive(Gamepad.current.jLeftX, rFactor*(Gamepad.current.RT-Gamepad.current.LT));
 		}
 	}

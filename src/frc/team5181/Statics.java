@@ -40,5 +40,6 @@ public class Statics {
     //Making this number greater than 1 = overclocking
     final static public double FULL_SPD_FACTOR = 1.0;
 
-    final static public boolean TEST_CHASSIS_MODE = true;
+    //Will disable everything except drive wheels if setting this to true
+    final static public boolean TEST_CHASSIS_MODE = false;
 }

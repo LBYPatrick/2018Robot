@@ -39,7 +39,7 @@ final public class Robot extends IterativeRobot {
 	public void robotInit() {
 
 		this.pdp = new PowerDistributionPanel();
-		this.irCage = new IRSensor(Statics.CAGE_IR_SENSOR,0.2);
+		this.irCage = new IRSensor(Statics.CAGE_IR_SENSOR,0.8);
 		//Hardware
         DriveTrain.init(Statics.DRIVE_LF,Statics.DRIVE_LB,Statics.DRIVE_RF,Statics.DRIVE_RB);
         Gamepad.init(Statics.XBOX_CTRL);
@@ -117,8 +117,10 @@ final public class Robot extends IterativeRobot {
 			speedFactor = isSNP ? Statics.LOW_SPD_FACTOR : Statics.FULL_SPD_FACTOR;
 
 			DriveTrain.updateSpeedLimit(speedFactor);
+			shooters.updateSpeedLimit(speedFactor);
+			intakeArmMotor.updateSpeedLimit(speedFactor);
+			intakeRollers.updateSpeedLimit(speedFactor);
 		}
-
 		/**
 		 * Soleniod Control using "A" button
 		 */
@@ -134,9 +136,11 @@ final public class Robot extends IterativeRobot {
 				intakeArmMotor.move(Gamepad.current.dPadDown, Gamepad.current.dPadUp);
 				intakeRollers.move(Gamepad.current.dPadDown, Gamepad.current.dPadUp);
 			}
+			if (Gamepad.X_state) {
+				indexs.move(Gamepad.X_state, false);
+			}
 
 			if (Gamepad.A_state) {
-				indexs.move(Gamepad.A_state, false);
 				shooters.move(Gamepad.A_state, false);
 			}
 		}
@@ -151,7 +155,7 @@ final public class Robot extends IterativeRobot {
 		 * NFS Drive Control (Might improve driving experience + less likely wearing out the gearboxes due to rapid speed change)
 		 */
 		else if(Gamepad.RT_state || Gamepad.LT_state || Gamepad.jLeftX_state) {
-			DriveTrain.tankDrive(Gamepad.current.jLeftX, rFactor*(Gamepad.current.RT-Gamepad.current.LT));
+			DriveTrain.tankDrive(Gamepad.current.jLeftX*0.5, -rFactor*(Gamepad.current.RT-Gamepad.current.LT));
 		}
 	}
 

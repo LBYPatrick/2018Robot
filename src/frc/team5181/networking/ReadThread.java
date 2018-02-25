@@ -10,17 +10,16 @@ public class ReadThread extends Thread {
     private DataInputStream din;
     private String msg;
 
-    public ReadThread(DataInputStream inputStream, String messageBuffer) {
+    public ReadThread(DataInputStream inputStream) {
         this.din = inputStream;
-        this.msg  = messageBuffer;
     }
 
     @Override
-    synchronized public void run() {
+    public void run() {
         try {
             while(true) {
                 try{
-                    this.msg += this.din.readUTF();
+                    this.msg = this.din.readUTF();
                 } catch (SocketException e) {break;} //Quit if Connection reset
             }
         }
@@ -28,6 +27,10 @@ public class ReadThread extends Thread {
 
             e.printStackTrace();
         }
+    }
+
+    public String getMessage() {
+        return this.msg;
     }
 
 }

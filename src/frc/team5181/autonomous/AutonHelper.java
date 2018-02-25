@@ -1,6 +1,7 @@
 package frc.team5181.autonomous;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team5181.actuators.DriveTrain;
 import frc.team5181.actuators.MotorControl;
 
@@ -50,6 +51,8 @@ public class AutonHelper {
 
         // If the length is less than 3, it's not valid. Longer than 3 is permitted, but only
         // the first 3 characters are taken.
+        
+        DriverStation.reportWarning(gsm,false);
         if (gsm == null || gsm.length() < 3) return OwnedSide.UNKNOWN;
 
         char gd = gsm.charAt(feature.ordinal());
@@ -64,7 +67,7 @@ public class AutonHelper {
 
 
     /**
-     * Tyler, stop messing with Jaci's great code. I won't even touch them
+     * Pat, stop messing with Tyler's great code. I won't even touch them
      * @return whether the Left side in the NEAR switch is for us
      */
     public static boolean isLeftSideOwned() {
@@ -77,7 +80,7 @@ public class AutonHelper {
      * @param forwardBack yVal ( > 0 ==> forward   || < 0 ==> back)
      * @param millisecond duration
      */
-    final public static int DEFAULT_BREAK_TIME = 500;
+    final public static int DEFAULT_BREAK_TIME = 2000;
 
     public static void tankDrive(double leftRight, double forwardBack, int millisecond) {
         try {

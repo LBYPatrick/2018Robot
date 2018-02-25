@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
  * directory.
  */
 final public class Robot extends IterativeRobot {
+	private boolean isLinearAutonOK = false;
 	private Task autonCommand;
 	private static int rFactor = 1;
 	private static double speedFactor = 1.0;
@@ -30,6 +31,7 @@ final public class Robot extends IterativeRobot {
 	private MotorControl shooters;
 	private PowerDistributionPanel pdp;
 	private IRSensor irCage;
+	private boolean isForceUpdateNeeded = false;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -37,8 +39,8 @@ final public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-
-		this.pdp = new PowerDistributionPanel();
+		
+		//this.pdp = new PowerDistributionPanel(0);
 		this.irCage = new IRSensor(Statics.CAGE_IR_SENSOR,0.8);
 		//Hardware
         DriveTrain.init(Statics.DRIVE_LF,Statics.DRIVE_LB,Statics.DRIVE_RF,Statics.DRIVE_RB);
@@ -69,14 +71,21 @@ final public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		AutonChooser.chooserInit();
 	}
 
+	@Override
+	public void disabledPeriodic() {
+		AutonChooser.chooserInit();
+	}
 	/**
 	 * This function is called periodically during autonomous
 	 */
 	@Override
 	public void autonomousPeriodic() {
+		if (!isLinearAutonOK) {
+			AutonChooser.getSelected().run();
+			isLinearAutonOK = true;
+		}
 	}
 
 	/**
@@ -106,6 +115,7 @@ final public class Robot extends IterativeRobot {
 		if(Gamepad.LB_state) {
 			if(Gamepad.current.LB) isRVSE = !isRVSE;
 			rFactor = isRVSE ? -1 : 1;
+			isForceUpdateNeeded = true;
 		}
 
 		/**
@@ -120,43 +130,46 @@ final public class Robot extends IterativeRobot {
 			shooters.updateSpeedLimit(speedFactor);
 			intakeArmMotor.updateSpeedLimit(speedFactor);
 			intakeRollers.updateSpeedLimit(speedFactor);
+			isForceUpdateNeeded = true;
 		}
 		/**
 		 * Soleniod Control using "A" button
 		 */
 		if(!Statics.TEST_CHASSIS_MODE) {
-			if (Gamepad.B_state) {
+			if (Gamepad.B_state || isForceUpdateNeeded) {
 				if (Gamepad.current.B) isSolenoidForward = !isSolenoidForward;
 
 				intakeSoleniod.move(isSolenoidForward, !isSolenoidForward);
 			}
 
-			if (Gamepad.dPad_state) {
+			if (Gamepad.dPad_state || isForceUpdateNeeded) {
 
 				intakeArmMotor.move(Gamepad.current.dPadDown, Gamepad.current.dPadUp);
 				intakeRollers.move(Gamepad.current.dPadDown, Gamepad.current.dPadUp);
 			}
-			if (Gamepad.X_state) {
-				indexs.move(Gamepad.X_state, false);
+			if (Gamepad.X_state || isForceUpdateNeeded) {
+				indexs.move(Gamepad.current.X, false);
 			}
 
-			if (Gamepad.A_state) {
-				shooters.move(Gamepad.A_state, false);
+			if (Gamepad.A_state || isForceUpdateNeeded) {
+				shooters.move(Gamepad.current.A, false);
 			}
 		}
 
 		/**
 		 *  RC Drive Control
 		 */
-		if(!isNFSControl && (Gamepad.jLeftY_state || Gamepad.jRightX_state)) {
+		if(!isNFSControl && (Gamepad.jLeftY_state || Gamepad.jRightX_state || isForceUpdateNeeded)) {
 			DriveTrain.tankDrive(Gamepad.current.jRightX,rFactor*(Gamepad.current.jLeftY));
 		}
 		/**
 		 * NFS Drive Control (Might improve driving experience + less likely wearing out the gearboxes due to rapid speed change)
 		 */
-		else if(Gamepad.RT_state || Gamepad.LT_state || Gamepad.jLeftX_state) {
+		else if(Gamepad.RT_state || Gamepad.LT_state || Gamepad.jLeftX_state || isForceUpdateNeeded) {
 			DriveTrain.tankDrive(Gamepad.current.jLeftX*0.5, -rFactor*(Gamepad.current.RT-Gamepad.current.LT));
 		}
+		
+		isForceUpdateNeeded = false;
 	}
 
 	public void postSensorData() {

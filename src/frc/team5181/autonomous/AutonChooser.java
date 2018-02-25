@@ -20,26 +20,43 @@ public class AutonChooser {
     
     public static void chooserInit(){
         chooser = new SendableChooser<>();
-        chooserAdd("Left");
-        chooserAdd("Middle");
-        chooserAdd("Right");
-        chooserAdd("Move only(Pass Autoline, let others work)");
+        chooserAdd("L");
+        chooserAdd("M");
+        chooserAdd("R");
+        chooserAdd("N");
         SmartDashboard.putData("Auton Chooser", chooser);
     }
     
     public static Task getAutonCommand(){
         DriverStation.reportWarning(chooser.getSelected(), false);
         switch (chooser.getSelected()) {
-            case "Left" :
-                return new SyncTask(new AutonTimeBased(AutonTimeBased.Left)); //Do Nothing
-            case "Middle" :
-                return new SyncTask(new AutonTimeBased(AutonTimeBased.Middle));
-            case "Right" :
-                return new SyncTask(new AutonTimeBased(AutonTimeBased.Right));
-            case "Move only(Pass Autoline, let others work)":
-                return new SyncTask(new AutonTimeBased(647));
+            case "L" :
+                return new SyncTask(new AutonTimeBased(0)); //Do Nothing
+            case "M" :
+                return new SyncTask(new AutonTimeBased(1));
+            case "R" :
+                return new SyncTask(new AutonTimeBased(2));
+            case "N":
+                return new SyncTask(new AutonTimeBased(3));
             default:
                 throw new RuntimeException();
         }
+    }
+    
+    public static Runnable getSelected() {
+    	DriverStation.reportWarning(chooser.getSelected(),false);
+    	switch(chooser.getSelected()) {
+    	case "L" :
+    		return new AutonTimeBased(0);
+    	case "M" :
+    		return new AutonTimeBased(1);
+    	case "R" :
+    		return new AutonTimeBased(2);
+    	case "N" :
+    		return new AutonTimeBased(3);
+    	default : DriverStation.reportWarning("No mode picked", false);
+    		return null;
+    	}
+    	
     }
 }

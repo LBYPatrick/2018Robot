@@ -1,7 +1,7 @@
 package frc.team5181.autonomous;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.team5181.actuators.DriveTrain;
-import sun.plugin2.message.Message;
 
 public class AutonTimeBased implements Runnable {
 
@@ -18,17 +18,6 @@ public class AutonTimeBased implements Runnable {
             AutonHelper.tankDrive(0,1,500);
             AutonHelper.takeABreak();
             boolean isLeftSide = AutonHelper.isLeftSideOwned();
-
-            //Stop moving if the side is not what we want for dropping the cube in & Asked to move only
-            if((this.position == 0 && !isLeftSide)
-                    || (this.position == 2 && isLeftSide) || this.position > 2) {
-
-                if(this.position == 1) return;
-
-                AutonHelper.tankDrive(0,1,500);
-
-                return;
-            }
 
 
             switch (this.position) {
@@ -66,10 +55,11 @@ public class AutonTimeBased implements Runnable {
                     AutonHelper.tankDrive(0,1,300); //Go forward
                     AutonHelper.takeABreak();
                     break;
+                default: DriverStation.reportWarning("Idle", false);
             }
 
             AutonHelper.shootCube(1); //Shoot the cube out
-
+            DriverStation.reportWarning("Execute Complete", false);	
         } catch (Exception e) {
             e.printStackTrace();
         }

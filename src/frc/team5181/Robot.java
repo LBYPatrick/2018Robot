@@ -71,6 +71,7 @@ final public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
+		AutonHelper.fetchGameData();
 	}
 
 	@Override
@@ -93,8 +94,9 @@ final public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		this.teleopControl(false);
+		this.teleopControl(true);
 		this.postSensorData();
+		this.postPDPData();
 	}
 
 	/**
@@ -104,6 +106,7 @@ final public class Robot extends IterativeRobot {
 	public void testPeriodic() {
 		this.teleopControl(true);
 		this.postSensorData();
+		this.postPDPData();
 	}
 
 	public void teleopControl(boolean isNFSControl) {
@@ -175,5 +178,21 @@ final public class Robot extends IterativeRobot {
 	public void postSensorData() {
 		SmartDashboard.putBoolean("Is cube in cage", this.irCage.isTargetDetected());
 	}
+	public void postPDPData() {
+	    SmartDashboard.putNumber("LF Wheel", pdp.getCurrent(Statics.PDP_Motor_LF));
+        SmartDashboard.putNumber("LB Wheel", pdp.getCurrent(Statics.PDP_Motor_LB));
+        SmartDashboard.putNumber("RF Wheel", pdp.getCurrent(Statics.PDP_Motor_RF));
+        SmartDashboard.putNumber("RB Wheel", pdp.getCurrent(Statics.PDP_Motor_RB));
+        SmartDashboard.putNumber("Intake Left", pdp.getCurrent(Statics.PDP_INDEX_LEFT));
+        SmartDashboard.putNumber("Intake Right", pdp.getCurrent(Statics.PDP_INDEX_RIGHT));
+        SmartDashboard.putNumber("Roller",pdp.getCurrent(Statics.PDP_ROLLER));
+        SmartDashboard.putNumber("Index Left", pdp.getCurrent(Statics.PDP_INDEX_LEFT));
+        SmartDashboard.putNumber("Index Right", pdp.getCurrent(Statics.PDP_INDEX_RIGHT));
+        SmartDashboard.putNumber("Shooter Left", pdp.getCurrent(Statics.PDP_SHOOTER_LEFT));
+        SmartDashboard.putNumber("Shooter Right", pdp.getCurrent(Statics.PDP_SHOOTER_RIGHT));
+        SmartDashboard.putNumber("LED", pdp.getCurrent(Statics.PDP_LED));
+        SmartDashboard.putNumber("VRM2", pdp.getCurrent(Statics.PDP_VRM2));
+        SmartDashboard.putNumber("VRM3", pdp.getCurrent(Statics.PDP_VRM3));
+    }
 }
 

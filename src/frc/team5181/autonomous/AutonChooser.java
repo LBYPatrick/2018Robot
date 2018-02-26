@@ -46,14 +46,10 @@ public class AutonChooser {
     public static Runnable getSelected() {
     	DriverStation.reportWarning(chooser.getSelected(),false);
     	switch(chooser.getSelected()) {
-    	case "L" :
-    		return new AutonTimeBased(0);
-    	case "M" :
-    		return new AutonTimeBased(1);
-    	case "R" :
-    		return new AutonTimeBased(2);
-    	case "N" :
-    		return new AutonTimeBased(3);
+    	case "L" : return new AutonTimeBased(0);
+    	case "M" : return new AutonTimeBased(1);
+    	case "R" : return new AutonTimeBased(2);
+    	case "N" : return new AutonTimeBased(3);
     	default : DriverStation.reportWarning("No mode picked", false);
     		return null;
     	}

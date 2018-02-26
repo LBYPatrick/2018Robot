@@ -66,6 +66,6 @@ public class AutonTimeBased extends TaskSequence {
 
         this.add(new AutonHelper.shootCube(1)); //Shoot the cube out
         AutonHelper.report("All done.");
-        
+
     }
 }

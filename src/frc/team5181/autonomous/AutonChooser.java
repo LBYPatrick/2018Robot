@@ -13,6 +13,7 @@ import frc.team5181.tasking.Task;
 public class AutonChooser {
 
     public static SendableChooser<String> chooser;
+
     public static Task autonChoice;
 
     private static void chooserAdd(String commandName){
@@ -39,12 +40,14 @@ public class AutonChooser {
                 return new AutonTimeBased(2);
             case "N":
                 return new AutonTimeBased(3);
+
             default:
                 throw new RuntimeException();
         }
     }
-    
+
     public static Task getSelected() {
+
     	DriverStation.reportWarning(chooser.getSelected(),false);
     	switch(chooser.getSelected()) {
     	case "L" : return new AutonTimeBased(0);

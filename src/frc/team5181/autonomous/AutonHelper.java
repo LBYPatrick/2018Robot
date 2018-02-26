@@ -6,6 +6,7 @@ import frc.team5181.actuators.MotorControl;
 import frc.team5181.tasking.Task;
 
 
+
 public class AutonHelper {
 
     private static MotorControl shooter;
@@ -43,8 +44,10 @@ public class AutonHelper {
             case 'R' :
                 report("RIGHT SWITCH");
                 return false;
+
             default:
                 report("UNKNOWN SWITCH");
+
                 return false;
         }
     }

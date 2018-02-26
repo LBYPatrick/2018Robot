@@ -22,12 +22,15 @@ public class Statics {
     //PDP
     public static final int PDP_Motor_LF = 0;
     public static final int PDP_Motor_LB = 1;
-    public static final int PDP_Motor_RB = 15;
-    public static final int PDP_Motor_RF = 14;
-    final static public int PDP_INTAKE_ARM_MOTORS = 2;
-    final static public int PDP_INTAKE_ROLLER_MOTORS = 3;
-    final static public int PDP_INDEX_MOTORS = 13;
-    final static public int PDP_SHOOTER_MOTORS = 12;
+    public static final int PDP_Motor_RF = 15;
+    public static final int PDP_Motor_RB = 14;
+    public static final int PDP_INTAKE_LEFT = 4;
+    public static final int PDP_INTAKE_RIGHT = 5;
+    public static final int PDP_ROLLER = 9;
+    public static final int PDP_INDEX_LEFT = 6;
+    public static final int PDP_INDEX_RIGHT = 7;
+    final static public int PDP_SHOOTER_LEFT = 12;
+    final static public int PDP_SHOOTER_RIGHT = 13;
 
     final static public int PDP_LED = 8;
     final static public int PDP_VRM2= 10;

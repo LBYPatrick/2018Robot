@@ -1,7 +1,6 @@
 package frc.team5181.autonomous;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.team5181.actuators.DriveTrain;
 
 public class AutonTimeBased implements Runnable {
 
@@ -17,49 +16,51 @@ public class AutonTimeBased implements Runnable {
         try {
             AutonHelper.tankDrive(0,1,500);
             AutonHelper.takeABreak();
-            boolean isLeftSide = AutonHelper.isLeftSideOwned();
+            boolean isLeftSide = AutonHelper.isCorrectSwitchLeft();
 
 
             switch (this.position) {
                 case 0: //Left
-                    AutonHelper.tankDrive(0,1,500); //Go forward
+                    AutonHelper.report("LEFT SIDE");
+                    AutonHelper.tankDrive(0, 1, 500); //Go forward for passing the auto-line
                     AutonHelper.takeABreak();
-
-                    AutonHelper.tankDrive(1,0,180); //Turn Right
-                    AutonHelper.takeABreak();
-
-                    AutonHelper.tankDrive(0,1,300); //Go forward
-                    AutonHelper.takeABreak();
-                    break;
-                case 1: // Middle
-                    if(isLeftSide) {
-                        AutonHelper.tankDrive(-1, 0, 180); //Turn Left
+                    if(isLeftSide) { //Shoot the cube in if it is the correct side
+                        AutonHelper.report("CORRECT SWITCH");
+                        AutonHelper.tankDrive(1, 0, 180); //Turn Right
                         AutonHelper.takeABreak();
-
-                        AutonHelper.tankDrive(0,1, 300); //Go Forward
+                        AutonHelper.tankDrive(0, 1, 300); //Go forward
                         AutonHelper.takeABreak();
-
-                        AutonHelper.tankDrive(1, 0,180); //Turn Right
-                        AutonHelper.takeABreak();
-
-                        AutonHelper.tankDrive(0,1,300); //Final Forward
                     }
                     break;
-                case 2: //Right
-                    AutonHelper.tankDrive(0,1,500); //Go forward
-                    AutonHelper.takeABreak();
-
-                    AutonHelper.tankDrive(-1,0,180); //Turn Left
-                    AutonHelper.takeABreak();
-
-                    AutonHelper.tankDrive(0,1,300); //Go forward
-                    AutonHelper.takeABreak();
+                case 1: // Middle
+                        AutonHelper.report("MIDDLE");
+                        AutonHelper.tankDrive(isLeftSide? -1 : 1, 0, 180); //Turn Left/Right
+                        AutonHelper.takeABreak();
+                        AutonHelper.tankDrive(0,1, 300); //Go Forward
+                        AutonHelper.takeABreak();
+                        AutonHelper.tankDrive(isLeftSide? 1 : -1, 0,180); //Turn Right/Left
+                        AutonHelper.takeABreak();
+                        AutonHelper.tankDrive(0,1,300); //Final Forward
                     break;
-                default: DriverStation.reportWarning("Idle", false);
+                case 2: //Right
+                    AutonHelper.report("RIGHT SIDE");
+                    AutonHelper.tankDrive(0,1,500); //Go forward for passing the auto-line
+                    AutonHelper.takeABreak();
+
+                    if(!isLeftSide) {
+                        AutonHelper.report("CORRECT SWITCH");
+                        AutonHelper.tankDrive(-1, 0, 180); //Turn Left
+                        AutonHelper.takeABreak();
+                        AutonHelper.tankDrive(0, 1, 300); //Go forward
+                        AutonHelper.takeABreak();
+                    }
+                    break;
+                default:
+                    AutonHelper.report("Go Forward only");
             }
 
             AutonHelper.shootCube(1); //Shoot the cube out
-            DriverStation.reportWarning("Execute Complete", false);	
+            AutonHelper.report("All done.");
         } catch (Exception e) {
             e.printStackTrace();
         }

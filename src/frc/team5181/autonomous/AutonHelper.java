@@ -59,7 +59,6 @@ public class AutonHelper {
             this.leftRight = leftRight;
             this.forwardBack = forwardBack;
             this.millisecond = millisecond;
-            this.startTime = System.currentTimeMillis();
         }
 
         public TimedDrive(int millisecond){
@@ -71,6 +70,7 @@ public class AutonHelper {
         }
 
         public boolean nextStep(){
+            if (this.startTime == 0) startTime = System.currentTimeMillis();
             if (System.currentTimeMillis() < startTime + millisecond) {
                 DriveTrain.tankDrive(leftRight, -forwardBack);
                 return false;
@@ -90,7 +90,6 @@ public class AutonHelper {
         public shootCube(double speed, int millisecond){
             this.speed = speed;
             this.millisecond = millisecond;
-            this.startTime = System.currentTimeMillis();
         }
 
         public shootCube(double speed){
@@ -98,6 +97,7 @@ public class AutonHelper {
         }
 
         public boolean nextStep(){
+            if (this.startTime == 0) startTime = System.currentTimeMillis();
             if (System.currentTimeMillis() < startTime + millisecond) {
                 shooter.move(speed);
                 return false;

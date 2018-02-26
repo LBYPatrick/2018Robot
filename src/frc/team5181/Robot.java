@@ -71,8 +71,8 @@ final public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		AutonHelper.fetchGameData();
-		AutonChooser.autonChoice = AutonChooser.getAutonCommand();
+        AutonChooser.autonChoice = AutonChooser.getAutonCommand();
+		AutonHelper.fetchGameData(); // This is a blocking function so...
 	}
 
 	@Override

@@ -181,8 +181,8 @@ final public class Robot extends IterativeRobot {
         SmartDashboard.putNumber("LB Wheel", pdp.getCurrent(Statics.PDP_Motor_LB));
         SmartDashboard.putNumber("RF Wheel", pdp.getCurrent(Statics.PDP_Motor_RF));
         SmartDashboard.putNumber("RB Wheel", pdp.getCurrent(Statics.PDP_Motor_RB));
-        SmartDashboard.putNumber("Intake Left", pdp.getCurrent(Statics.PDP_INDEX_LEFT));
-        SmartDashboard.putNumber("Intake Right", pdp.getCurrent(Statics.PDP_INDEX_RIGHT));
+        SmartDashboard.putNumber("Intake Left", pdp.getCurrent(Statics.PDP_INTAKE_LEFT));
+        SmartDashboard.putNumber("Intake Right", pdp.getCurrent(Statics.PDP_INTAKE_RIGHT));
         SmartDashboard.putNumber("Roller",pdp.getCurrent(Statics.PDP_ROLLER));
         SmartDashboard.putNumber("Index Left", pdp.getCurrent(Statics.PDP_INDEX_LEFT));
         SmartDashboard.putNumber("Index Right", pdp.getCurrent(Statics.PDP_INDEX_RIGHT));

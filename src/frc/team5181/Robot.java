@@ -4,10 +4,8 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team5181.actuators.*;
 import frc.team5181.tasking.Task;
-import frc.team5181.sensors.IRSensor;
+import frc.team5181.sensors.*;
 import frc.team5181.autonomous.*;
-
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -29,7 +27,7 @@ final public class Robot extends IterativeRobot {
 	private MotorControl intakeRollers;
 	private MotorControl indexs;
 	private MotorControl shooters;
-	private PowerDistributionPanel pdp;
+	private PDP pdp;
 	private IRSensor irCage;
 	private boolean isForceUpdateNeeded = false;
 
@@ -40,7 +38,7 @@ final public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		
-		//this.pdp = new PowerDistributionPanel(0);
+		this.pdp = new PDP(0);
 		this.irCage = new IRSensor(Statics.CAGE_IR_SENSOR,0.8);
 		//Hardware
         DriveTrain.init(Statics.DRIVE_LF,Statics.DRIVE_LB,Statics.DRIVE_RF,Statics.DRIVE_RB);

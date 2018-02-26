@@ -3,6 +3,7 @@ package frc.team5181.autonomous;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.team5181.actuators.DriveTrain;
 import frc.team5181.actuators.MotorControl;
+import frc.team5181.tasking.Task;
 
 
 public class AutonHelper {
@@ -42,39 +43,69 @@ public class AutonHelper {
             case 'R' :
                 report("RIGHT SWITCH");
                 return false;
-            default  :
-                report("UNKNOWN SWTICH");
+            default:
+                report("UNKNOWN SWITCH");
                 return false;
         }
     }
 
-    public static void tankDrive(double leftRight, double forwardBack, int millisecond) {
-        try {
-            report("Moving at speed of (" + leftRight + ", " + forwardBack + ") for" + millisecond + " ms");
-            DriveTrain.tankDrive(leftRight, -forwardBack);
-            Thread.sleep(millisecond);
-            DriveTrain.tankDrive(0,0);
-            report("Moving done");
+    public static class TimedDrive implements Task {
+        double leftRight;
+        double forwardBack;
+        int millisecond;
+        long startTime;
 
-        }catch(Exception e) { e.printStackTrace(); }
+        public TimedDrive(double leftRight, double forwardBack, int millisecond){
+            this.leftRight = leftRight;
+            this.forwardBack = forwardBack;
+            this.millisecond = millisecond;
+            this.startTime = System.currentTimeMillis();
+        }
+
+        public TimedDrive(int millisecond){
+            this(0, 0,millisecond);
+        }
+
+        public TimedDrive(){
+            this(DEFAULT_BREAK_TIME);
+        }
+
+        public boolean nextStep(){
+            if (System.currentTimeMillis() < startTime + millisecond) {
+                DriveTrain.tankDrive(leftRight, -forwardBack);
+                return false;
+            } else {
+                DriveTrain.tankDrive(0, 0);
+                return true;
+            }
+        }
+
     }
 
-    public static void takeABreak(){ takeABreak(DEFAULT_BREAK_TIME); }
+    public static class shootCube implements Task{
+        double speed;
+        int millisecond;
+        long startTime;
 
-    public static void takeABreak(int millisecond) {
-        try {
-            report("Idle for " + millisecond + " ms");
-            Thread.sleep(millisecond);
-            report("Woke up");
+        public shootCube(double speed, int millisecond){
+            this.speed = speed;
+            this.millisecond = millisecond;
+            this.startTime = System.currentTimeMillis();
+        }
 
-        } catch (Exception e) { e.printStackTrace(); }
-    }
+        public shootCube(double speed){
+            this(speed, DEFAULT_BREAK_TIME);
+        }
 
-    public static void shootCube(double speed) {
-        report("Shooting cube at speed of " + speed);
-        shooter.move(speed);
-        takeABreak();
-        shooter.move(0);
+        public boolean nextStep(){
+            if (System.currentTimeMillis() < startTime + millisecond) {
+                shooter.move(speed);
+                return false;
+            } else {
+                shooter.move(0);
+                return true;
+            }
+        }
 
     }
 

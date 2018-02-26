@@ -72,6 +72,7 @@ final public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousInit() {
 		AutonHelper.fetchGameData();
+		AutonChooser.autonChoice = AutonChooser.getAutonCommand();
 	}
 
 	@Override
@@ -84,8 +85,7 @@ final public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() {
 		if (!isLinearAutonOK) {
-			AutonChooser.getSelected().run();
-			isLinearAutonOK = true;
+			isLinearAutonOK = AutonChooser.autonChoice.nextStep();
 		}
 	}
 

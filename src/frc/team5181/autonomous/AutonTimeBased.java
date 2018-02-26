@@ -1,7 +1,5 @@
 package frc.team5181.autonomous;
 
-import edu.wpi.first.wpilibj.DriverStation;
-
 public class AutonTimeBased implements Runnable {
 
     final public static int Left = 0, Middle = 1, Right = 2;

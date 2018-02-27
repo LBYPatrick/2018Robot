@@ -1,5 +1,6 @@
 package frc.team5181;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team5181.actuators.*;
@@ -30,6 +31,7 @@ final public class Robot extends IterativeRobot {
 	private PDP pdp;
 	private IRSensor irCage;
 	private boolean isForceUpdateNeeded = false;
+	private LSProfiler pdpProfiler;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -50,6 +52,14 @@ final public class Robot extends IterativeRobot {
 			intakeRollers  = new MotorControl(Statics.INTAKE_ROLLER_MOTORS,false);
 			indexs = new MotorControl(Statics.INDEX_MOTORS, false);
 			shooters = new MotorControl(Statics.SHOOTER_MOTORS, true);
+		}
+
+		intakeRollers.updateSpeedLimit(0.5);
+
+        if(Statics.DEBUG_MODE) {
+        	pdpProfiler = new LSProfiler("PDP-SmartDashboard");
+        	Gamepad.setDebugMode(true);
+
 		}
 
 		AutonHelper.init(shooters); //Pass shooter to AutonHelper
@@ -177,6 +187,7 @@ final public class Robot extends IterativeRobot {
 		SmartDashboard.putBoolean("Is cube in cage", this.irCage.isTargetDetected());
 	}
 	public void postPDPData() {
+		pdpProfiler.start();
 	    SmartDashboard.putNumber("LF Wheel", pdp.getCurrent(Statics.PDP_Motor_LF));
         SmartDashboard.putNumber("LB Wheel", pdp.getCurrent(Statics.PDP_Motor_LB));
         SmartDashboard.putNumber("RF Wheel", pdp.getCurrent(Statics.PDP_Motor_RF));
@@ -191,6 +202,7 @@ final public class Robot extends IterativeRobot {
         SmartDashboard.putNumber("LED", pdp.getCurrent(Statics.PDP_LED));
         SmartDashboard.putNumber("VRM2", pdp.getCurrent(Statics.PDP_VRM2));
         SmartDashboard.putNumber("VRM3", pdp.getCurrent(Statics.PDP_VRM3));
+		DriverStation.reportWarning(pdpProfiler.toString(), false);
     }
 }
 

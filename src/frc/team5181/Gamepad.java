@@ -1,15 +1,22 @@
 package frc.team5181;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import frc.team5181.sensors.LSProfiler;
 
 final public class Gamepad { //Why final? Because then Java would try to final every method it can, which is faster.
+
+    private static LSProfiler p = new LSProfiler("Gamepad");
+    private static boolean isDebug = false;
 
     public enum Mode {
         GAMEPAD,
         JOYSTICK
     }
+
+    public static void setDebugMode(boolean value) {isDebug = value;}
 
     static public class ValueContainer {
         //Gamepad
@@ -156,6 +163,7 @@ final public class Gamepad { //Why final? Because then Java would try to final e
     }
 
     static public void updateStatus() {
+        if(isDebug) p.start();
         //Get Data
         switch(CONTROLLER_MODE) {
             case GAMEPAD :
@@ -231,6 +239,7 @@ final public class Gamepad { //Why final? Because then Java would try to final e
             default : break; // tan90 boys
         }
         previous.writeValue(current);
+        if(isDebug) DriverStation.reportWarning(p.toString(),false);
     }
 
 }

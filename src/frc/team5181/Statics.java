@@ -45,4 +45,6 @@ public class Statics {
 
     //Will disable everything except drive wheels if setting this to true
     final static public boolean TEST_CHASSIS_MODE = false;
+
+    final static public boolean DEBUG_MODE = false;
 }

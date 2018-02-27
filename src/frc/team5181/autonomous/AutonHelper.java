@@ -13,7 +13,7 @@ public class AutonHelper {
     private static MotorControl shooter;
     private static String gameData;
     final public static int DEFAULT_BREAK_TIME = 2000;
-    public static boolean isOutputEnabled = true;
+    public static boolean isOutputEnabled = false;
 
     public static void init(MotorControl shooterMotor) {
         shooter = shooterMotor;

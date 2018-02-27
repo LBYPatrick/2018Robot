@@ -32,6 +32,8 @@ final public class Robot extends IterativeRobot {
 	private IRSensor irCage;
 	private boolean isForceUpdateNeeded = false;
 	private LSProfiler pdpProfiler;
+	
+	private int speedSwitch = 0;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -54,10 +56,9 @@ final public class Robot extends IterativeRobot {
 			shooters = new MotorControl(Statics.SHOOTER_MOTORS, true);
 		}
 
-		intakeRollers.updateSpeedLimit(0.5);
-
         if(Statics.DEBUG_MODE) {
         	pdpProfiler = new LSProfiler("PDP-SmartDashboard");
+        	AutonHelper.isOutputEnabled = false;
         	Gamepad.setDebugMode(true);
 
 		}
@@ -104,7 +105,7 @@ final public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		this.teleopControl(true);
 		this.postSensorData();
-		this.postPDPData();
+		//this.postPDPData();
 	}
 
 	/**
@@ -114,7 +115,7 @@ final public class Robot extends IterativeRobot {
 	public void testPeriodic() {
 		this.teleopControl(true);
 		this.postSensorData();
-		this.postPDPData();
+		//this.postPDPData();
 	}
 
 	public void teleopControl(boolean isNFSControl) {
@@ -141,7 +142,31 @@ final public class Robot extends IterativeRobot {
 			shooters.updateSpeedLimit(speedFactor);
 			intakeArmMotor.updateSpeedLimit(speedFactor);
 			intakeRollers.updateSpeedLimit(speedFactor);
+			indexs.updateSpeedLimit(speedFactor);
 			isForceUpdateNeeded = true;
+		}
+		
+		if(Gamepad.Y_state && Gamepad.current.Y) {
+			switch(speedSwitch) {
+			case 0 : speedFactor = 0.1; break;
+			case 1 : speedFactor = 0.3; break;
+			case 2 : speedFactor = 0.5; break;
+			case 3 : speedFactor = 0.7; break;
+			case 4 : speedFactor = 0.9; break;
+			case 5 : speedFactor = 1.0; break;
+			default : speedSwitch = -1;
+					  speedFactor = 0.1;
+					  break;
+			}
+			
+			DriveTrain.updateSpeedLimit(speedFactor);
+			shooters.updateSpeedLimit(speedFactor);
+			intakeArmMotor.updateSpeedLimit(speedFactor);
+			intakeRollers.updateSpeedLimit(speedFactor);
+			indexs.updateSpeedLimit(speedFactor);
+			isForceUpdateNeeded = true;
+			
+			speedSwitch += 1;
 		}
 		/**
 		 * Soleniod Control using "A" button

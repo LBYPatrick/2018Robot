@@ -38,7 +38,7 @@ public class Statics {
 
     final static public int XBOX_CTRL = 0;
 
-    final static public double LOW_SPD_FACTOR = 0.4;
+    final static public double LOW_SPD_FACTOR = 0.5;
 
     //Making this number greater than 1 = overclocking
     final static public double FULL_SPD_FACTOR = 1.0;

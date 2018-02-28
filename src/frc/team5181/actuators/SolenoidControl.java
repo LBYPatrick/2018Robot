@@ -19,4 +19,10 @@ public class SolenoidControl {
         else if (forward) {solenoid.set(DoubleSolenoid.Value.kForward); AutonHelper.report("Solenoid Forward");}
         else {solenoid.set(DoubleSolenoid.Value.kReverse);AutonHelper.report("Soleniod Reverse");}
     }
+
+    @Override
+    public String toString() {
+        return "Pressure Status: " + (this.compressor.getPressureSwitchValue() ? "Good":"Too High")
+                + "\tCurrent: " + this.compressor.getCompressorCurrent() + "A";
+    }
 }

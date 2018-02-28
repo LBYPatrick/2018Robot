@@ -1,5 +1,7 @@
 package frc.team5181;
 
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -32,6 +34,7 @@ final public class Robot extends IterativeRobot {
 	private IRSensor irCage;
 	private boolean isForceUpdateNeeded = false;
 	private LSProfiler pdpProfiler;
+	private UsbCamera frontCam;
 	
 	private int speedSwitch = 0;
 
@@ -41,7 +44,8 @@ final public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		
+
+		frontCam = CameraServer.getInstance().startAutomaticCapture();
 		this.pdp = new PDP(0);
 		this.irCage = new IRSensor(Statics.CAGE_IR_SENSOR,0.8);
 		//Hardware
@@ -104,8 +108,6 @@ final public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		this.teleopControl(true);
-		this.postSensorData();
-		//this.postPDPData();
 	}
 
 	/**
@@ -114,8 +116,10 @@ final public class Robot extends IterativeRobot {
 	@Override
 	public void testPeriodic() {
 		this.teleopControl(true);
-		this.postSensorData();
-		//this.postPDPData();
+		if(Statics.DEBUG_MODE) {
+			this.postSensorData();
+			this.postPDPData();
+		}
 	}
 
 	public void teleopControl(boolean isNFSControl) {
@@ -158,12 +162,9 @@ final public class Robot extends IterativeRobot {
 					  speedFactor = 0.1;
 					  break;
 			}
-			
-			DriveTrain.updateSpeedLimit(speedFactor);
-			shooters.updateSpeedLimit(speedFactor);
-			intakeArmMotor.updateSpeedLimit(speedFactor);
+
 			intakeRollers.updateSpeedLimit(speedFactor);
-			indexs.updateSpeedLimit(speedFactor);
+
 			isForceUpdateNeeded = true;
 			
 			speedSwitch += 1;

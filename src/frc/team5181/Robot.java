@@ -45,7 +45,7 @@ final public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 
-		frontCam = CameraServer.getInstance().startAutomaticCapture();
+		//frontCam = CameraServer.getInstance().startAutomaticCapture();
 		this.pdp = new PDP(0);
 		this.irCage = new IRSensor(Statics.CAGE_IR_SENSOR,0.8);
 		//Hardware
@@ -62,7 +62,7 @@ final public class Robot extends IterativeRobot {
 
         if(Statics.DEBUG_MODE) {
         	pdpProfiler = new LSProfiler("PDP-SmartDashboard");
-        	AutonHelper.isOutputEnabled = false;
+        	AutonHelper.isOutputEnabled = true;
         	Gamepad.setDebugMode(true);
 
 		}

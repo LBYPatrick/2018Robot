@@ -15,11 +15,15 @@ public class AutonHelper {
     final public static int DEFAULT_BREAK_TIME = 2000;
     public static boolean isOutputEnabled = false;
 
+    private static int location;
+
     public static void init(MotorControl shooterMotor) {
         shooter = shooterMotor;
     }
 
     public static void fetchGameData() {
+
+        //gamedata
         String dataBuffer;
         while(true) {
             dataBuffer = DriverStation.getInstance().getGameSpecificMessage();
@@ -28,6 +32,14 @@ public class AutonHelper {
 
         gameData = dataBuffer;
         report("GameData: " + gameData);
+
+        //Robot Location
+        location = DriverStation.getInstance().getLocation() - 1;
+
+    }
+
+    public static int getLocation() {
+        return location;
     }
 
     /**

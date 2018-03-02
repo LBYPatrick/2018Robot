@@ -56,6 +56,7 @@ final public class Robot extends IterativeRobot {
 			intakeSoleniod = new SolenoidControl(Statics.INTAKE_SOLENOID_FORWARD, Statics.INTAKE_SOLENOID_REVERSE);
 			intakeArmMotor = new MotorControl(Statics.INTAKE_ARM_MOTORS, false);
 			intakeRollers  = new MotorControl(Statics.INTAKE_ROLLER_MOTORS,false);
+			intakeRollers.updateSpeedLimit(0.2);
 			indexs = new MotorControl(Statics.INDEX_MOTORS, false);
 			shooters = new MotorControl(Statics.SHOOTER_MOTORS, true);
 		}
@@ -106,10 +107,22 @@ final public class Robot extends IterativeRobot {
 	 * This function is called periodically during operator control
 	 */
 	@Override
+	public void teleopInit(){
+		if(!Statics.DEBUG_MODE) {
+			AutonHelper.isOutputEnabled = false;
+		}
+	}
+
+	@Override
 	public void teleopPeriodic() {
 		this.teleopControl(true);
 	}
 
+
+	@Override
+	public void testInit() {
+		AutonHelper.isOutputEnabled = true;
+	}
 	/**
 	 * This function is called periodically during test mode
 	 */

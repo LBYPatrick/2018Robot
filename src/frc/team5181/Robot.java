@@ -35,6 +35,8 @@ final public class Robot extends IterativeRobot {
 	private boolean isForceUpdateNeeded = false;
 	private LSProfiler pdpProfiler;
 	private UsbCamera frontCam;
+	private GamepadControl gp1;
+	private GamepadControl gp2;
 	
 	private int speedSwitch = 0;
 
@@ -50,7 +52,9 @@ final public class Robot extends IterativeRobot {
 		this.irCage = new IRSensor(Statics.CAGE_IR_SENSOR,0.8);
 		//Hardware
         DriveTrain.init(Statics.DRIVE_LF,Statics.DRIVE_LB,Statics.DRIVE_RF,Statics.DRIVE_RB);
-        Gamepad.init(Statics.XBOX_CTRL);
+
+        gp1 = new GamepadControl(Statics.XBOX_CTRL);
+        gp2 = new GamepadControl(Statics.XBOX_CTRL+1);
 
         if(!Statics.TEST_CHASSIS_MODE) {
 			intakeSoleniod = new SolenoidControl(Statics.INTAKE_SOLENOID_FORWARD, Statics.INTAKE_SOLENOID_REVERSE);
@@ -64,7 +68,7 @@ final public class Robot extends IterativeRobot {
         if(Statics.DEBUG_MODE) {
         	pdpProfiler = new LSProfiler("PDP-SmartDashboard");
         	AutonHelper.isOutputEnabled = true;
-        	Gamepad.setDebugMode(true);
+        	gp1.setDebugMode(true);
 
 		}
 
@@ -86,6 +90,7 @@ final public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousInit() {
 		AutonHelper.fetchGameData();
+		isLinearAutonOK = false;
 	}
 
 	@Override
@@ -136,13 +141,14 @@ final public class Robot extends IterativeRobot {
 	}
 
 	public void teleopControl(boolean isNFSControl) {
-		Gamepad.updateStatus();
+		gp1.updateStatus();
+		gp2.updateStatus();
 
 		/**
 		 * Reverse Gear Trigger (Button Y, AKA "Triangle" in Dualshock 4)
 		 */
-		if(Gamepad.LB_state) {
-			if(Gamepad.current.LB) isRVSE = !isRVSE;
+		if(gp1.LB_state) {
+			if(gp1.current.LB) isRVSE = !isRVSE;
 			rFactor = isRVSE ? -1 : 1;
 			isForceUpdateNeeded = true;
 		}
@@ -151,8 +157,8 @@ final public class Robot extends IterativeRobot {
 		 *  Sniping Mode (First introduced for Team 11319 in FTC 2017 Relic Recovery)
 		 *  Use Right Bumper for toggling
 		 */
-		if(Gamepad.RB_state) {
-			if(Gamepad.current.RB) isSNP = !isSNP;
+		if(gp2.RB_state) {
+			if(gp2.current.RB) isSNP = !isSNP;
 			speedFactor = isSNP ? Statics.LOW_SPD_FACTOR : Statics.FULL_SPD_FACTOR;
 
 			DriveTrain.updateSpeedLimit(speedFactor);
@@ -163,7 +169,7 @@ final public class Robot extends IterativeRobot {
 			isForceUpdateNeeded = true;
 		}
 		
-		if(Gamepad.Y_state && Gamepad.current.Y) {
+		if(gp1.Y_state && gp1.current.Y) {
 			switch(speedSwitch) {
 			case 0 : speedFactor = 0.1; break;
 			case 1 : speedFactor = 0.3; break;
@@ -186,37 +192,37 @@ final public class Robot extends IterativeRobot {
 		 * Soleniod Control using "A" button
 		 */
 		if(!Statics.TEST_CHASSIS_MODE) {
-			if (Gamepad.B_state || isForceUpdateNeeded) {
-				if (Gamepad.current.B) isSolenoidForward = !isSolenoidForward;
+			if (gp1.B_state || isForceUpdateNeeded) {
+				if (gp1.current.B) isSolenoidForward = !isSolenoidForward;
 
 				intakeSoleniod.move(isSolenoidForward, !isSolenoidForward);
 			}
 
-			if (Gamepad.dPad_state || isForceUpdateNeeded) {
+			if (gp1.dPad_state || isForceUpdateNeeded) {
 
-				intakeArmMotor.move(Gamepad.current.dPadDown, Gamepad.current.dPadUp);
-				intakeRollers.move(Gamepad.current.dPadDown, Gamepad.current.dPadUp);
+				intakeArmMotor.move(gp1.current.dPadDown, gp1.current.dPadUp);
+				intakeRollers.move(gp1.current.dPadDown, gp1.current.dPadUp);
 			}
-			if (Gamepad.X_state || isForceUpdateNeeded) {
-				indexs.move(Gamepad.current.X, false);
+			if (gp1.X_state || isForceUpdateNeeded) {
+				indexs.move(gp1.current.X, false);
 			}
 
-			if (Gamepad.A_state || isForceUpdateNeeded) {
-				shooters.move(Gamepad.current.A, false);
+			if (gp1.A_state || isForceUpdateNeeded) {
+				shooters.move(gp1.current.A, false);
 			}
 		}
 
 		/**
 		 *  RC Drive Control
 		 */
-		if(!isNFSControl && (Gamepad.jLeftY_state || Gamepad.jRightX_state || isForceUpdateNeeded)) {
-			DriveTrain.tankDrive(Gamepad.current.jRightX,rFactor*(Gamepad.current.jLeftY));
+		if(!isNFSControl && (gp1.jLeftY_state || gp1.jRightX_state || isForceUpdateNeeded)) {
+			DriveTrain.tankDrive(gp1.current.jRightX,rFactor*(gp1.current.jLeftY));
 		}
 		/**
 		 * NFS Drive Control (Might improve driving experience + less likely wearing out the gearboxes due to rapid speed change)
 		 */
-		else if(Gamepad.RT_state || Gamepad.LT_state || Gamepad.jLeftX_state || isForceUpdateNeeded) {
-			DriveTrain.tankDrive(Gamepad.current.jLeftX*0.5, -rFactor*(Gamepad.current.RT-Gamepad.current.LT));
+		else if(gp1.RT_state || gp1.LT_state || gp1.jLeftX_state || isForceUpdateNeeded) {
+			DriveTrain.tankDrive(gp1.current.jLeftX*0.5, -rFactor*(gp1.current.RT-gp1.current.LT));
 		}
 		
 		isForceUpdateNeeded = false;

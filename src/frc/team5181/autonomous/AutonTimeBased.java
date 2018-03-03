@@ -23,15 +23,28 @@ public class AutonTimeBased implements Runnable {
 
         boolean isCubeShootable = false;
 
-        boolean isAutoMove = false;
+        boolean isMoveOnly = false;
 
-        if(this.mode == Mode.AutoMove) {
-            isAutoMove = true;
-            this.mode = AutonHelper.getLocation();
-        }
-        else if(this.mode == Mode.MiddleMove) {
-            isAutoMove = true;
-            this.mode = Mode.Middle;
+        //Process assisted modes
+        switch(this.mode) {
+            case Mode.LRAutoline:
+
+                isMoveOnly = true;
+                this.mode = Mode.Left;
+                break;
+
+            case Mode.AutoMove:
+
+                isMoveOnly = true;
+                this.mode = AutonHelper.getLocation();
+                break;
+
+            case Mode.MiddleMove:
+
+                isMoveOnly = true;
+                this.mode = Mode.Middle;
+                break;
+
         }
 
         try {
@@ -47,7 +60,7 @@ public class AutonTimeBased implements Runnable {
                     AutonHelper.tankDrive(0, 1, 500); //Go forward for passing the auto-line
                     AutonHelper.takeABreak();
 
-                    if(isAutoMove) break; //Stop Auton if it is AutoMove
+                    if(isMoveOnly) break; //Stop Auton if it is AutoMove
 
                     if(isLeftSide) { //Shoot the cube in if it is the correct side
                         AutonHelper.report("CORRECT SWITCH");
@@ -65,7 +78,7 @@ public class AutonTimeBased implements Runnable {
                         AutonHelper.tankDrive(0,1, 300); //Go Forward
                         AutonHelper.takeABreak();
 
-                        if(isAutoMove) {
+                        if(isMoveOnly) {
                             AutonHelper.tankDrive(0,1,300);
                             AutonHelper.takeABreak();
                         }
@@ -80,7 +93,7 @@ public class AutonTimeBased implements Runnable {
                     AutonHelper.tankDrive(0,1,500); //Go forward for passing the auto-line
                     AutonHelper.takeABreak();
 
-                    if(isAutoMove) break;
+                    if(isMoveOnly) break;
 
                     if(!isLeftSide) {
                         AutonHelper.report("CORRECT SWITCH");
@@ -92,24 +105,20 @@ public class AutonTimeBased implements Runnable {
                     }
                     break;
                 case Mode.LSCube:
-                case Mode.RSCube:
-                case Mode.LRAutoline:
-
                     AutonHelper.tankDrive(0,0.5,300);
                     AutonHelper.takeABreak();
-                    if((this.mode == Mode.LSCube && isLeftSide) || (this.mode == Mode.RSCube && !isLeftSide)) {
-                        isCubeShootable = true;
-                    }
-                    else if(this.mode == Mode.LRAutoline) {
-                        AutonHelper.tankDrive(0,0.5,300);
-                        AutonHelper.takeABreak();
-                    }
+                    if(isLeftSide) { isCubeShootable = true; }
                     break;
 
-                default:
+                case Mode.RSCube:
+                    AutonHelper.tankDrive(0,0.5,300);
+                    AutonHelper.takeABreak();
+                    if(isLeftSide) { isCubeShootable = true; }
+                    break;
+
             }
 
-            if (isCubeShootable && !isAutoMove) {
+            if (isCubeShootable) {
                 AutonHelper.shootCube(1); //Shoot the cube out
                 AutonHelper.takeABreak();
 

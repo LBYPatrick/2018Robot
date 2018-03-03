@@ -18,25 +18,29 @@ import frc.team5181.autonomous.*;
  * directory.
  */
 final public class Robot extends IterativeRobot {
-	private boolean isLinearAutonOK = false;
-	private Task autonCommand;
-	private static int rFactor = 1;
-	private static double speedFactor = 1.0;
-	private static boolean isRVSE = false; // Means "is Reverse Mode Triggered"
-	private static boolean isSNP = false;  // Means "is Sniping Mode Triggered"
-	private static boolean isSolenoidForward = true;
-	private SolenoidControl intakeSoleniod;
-	private MotorControl intakeArmMotor;
-	private MotorControl intakeRoller;
-	private MotorControl indexs;
-	private MotorControl shooters;
-	private PDP pdp;
-	private IRSensor irCage;
-	private boolean isForceUpdateNeeded = false;
-	private LSProfiler pdpProfiler;
-	private UsbCamera frontCam;
-	private GamepadControl gp1;
-	private GamepadControl gp2;
+
+    //Software
+    private static boolean          isLinearAutonOK = false;
+	private static Task             autonCommand;
+	private static int              rFactor = 1;
+    private static LSProfiler       pdpProfiler;
+	private static double           speedFactor = 1.0;
+    private static boolean          isForceUpdateNeeded = false;
+	private static boolean          isRVSE = false; // Means "is Reverse Mode Triggered"
+	private static boolean          isSNP = false;  // Means "is Sniping Mode Triggered"
+
+    //Hardware
+    private static boolean          isSolenoidForward = true;
+	private static SolenoidControl  intakeSoleniod;
+	private static MotorControl     intakeArmMotor;
+	private static MotorControl     intakeRoller;
+	private static MotorControl     indexs;
+	private static MotorControl     shooters;
+	private static PDP              pdp;
+	private static IRSensor         irCage;
+	private static UsbCamera        frontCam;
+	private static GamepadControl   gp1;
+	private static GamepadControl   gp2;
 	
 	private int speedSwitch = 0;
 
@@ -53,16 +57,18 @@ final public class Robot extends IterativeRobot {
 		//Hardware
         DriveTrain.init(Statics.DRIVE_LF,Statics.DRIVE_LB,Statics.DRIVE_RF,Statics.DRIVE_RB);
 
-        gp1 = new GamepadControl(Statics.XBOX_CTRL);
-        gp2 = new GamepadControl(Statics.XBOX_CTRL+1);
+        gp1 = new GamepadControl(Statics.XBOX_CTRL_1);
+        gp2 = new GamepadControl(Statics.XBOX_CTRL_2);
 
         if(!Statics.TEST_CHASSIS_MODE) {
-			intakeSoleniod = new SolenoidControl(Statics.INTAKE_SOLENOID_FORWARD, Statics.INTAKE_SOLENOID_REVERSE);
-			intakeArmMotor = new MotorControl(Statics.INTAKE_ARM_MOTORS, false);
-			intakeRoller  = new MotorControl(Statics.INTAKE_ROLLER_MOTORS,false);
+			intakeSoleniod 	= new SolenoidControl	(Statics.INTAKE_SOLENOID_FORWARD, Statics.INTAKE_SOLENOID_REVERSE);
+			intakeArmMotor 	= new MotorControl		(Statics.INTAKE_ARM_MOTORS,false);
+			intakeRoller  	= new MotorControl		(Statics.INTAKE_ROLLER_MOTORS,false);
+
+			indexs 			= new MotorControl		(Statics.INDEX_MOTORS, false);
+			shooters 		= new MotorControl		(Statics.SHOOTER_MOTORS, true);
+
 			intakeRoller.updateSpeedLimit(0.2);
-			indexs = new MotorControl(Statics.INDEX_MOTORS, false);
-			shooters = new MotorControl(Statics.SHOOTER_MOTORS, true);
 		}
 
         if(Statics.DEBUG_MODE) {
@@ -123,6 +129,7 @@ final public class Robot extends IterativeRobot {
 		gp1.updateStatus();
 		gp2.updateStatus();
 		this.driveControl(true);
+		this.shooterControl();
 	}
 
 
@@ -135,7 +142,10 @@ final public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		this.driveControl(true);
+        gp1.updateStatus();
+        gp2.updateStatus();
+	    this.driveControl(true);
+	    this.shooterControl();
 		if(Statics.DEBUG_MODE) {
 			this.postSensorData();
 			this.postPDPData();
@@ -161,33 +171,14 @@ final public class Robot extends IterativeRobot {
 			if(gp2.current.RB) isSNP = !isSNP;
 			speedFactor = isSNP ? Statics.LOW_SPD_FACTOR : Statics.FULL_SPD_FACTOR;
 
-			DriveTrain.updateSpeedLimit(speedFactor);
-			shooters.updateSpeedLimit(speedFactor);
-			intakeArmMotor.updateSpeedLimit(speedFactor);
-			intakeRoller.updateSpeedLimit(speedFactor);
-			indexs.updateSpeedLimit(speedFactor);
+			DriveTrain.     updateSpeedLimit(speedFactor);
+			shooters.       updateSpeedLimit(speedFactor);
+			intakeArmMotor. updateSpeedLimit(speedFactor);
+			intakeRoller.   updateSpeedLimit(speedFactor);
+			indexs.         updateSpeedLimit(speedFactor);
 			isForceUpdateNeeded = true;
 		}
-		
-		if(gp1.Y_state && gp1.current.Y) {
-			switch(speedSwitch) {
-			case 0 : speedFactor = 0.1; break;
-			case 1 : speedFactor = 0.3; break;
-			case 2 : speedFactor = 0.5; break;
-			case 3 : speedFactor = 0.7; break;
-			case 4 : speedFactor = 0.9; break;
-			case 5 : speedFactor = 1.0; break;
-			default : speedSwitch = -1;
-					  speedFactor = 0.1;
-					  break;
-			}
 
-			intakeRoller.updateSpeedLimit(speedFactor);
-
-			isForceUpdateNeeded = true;
-			
-			speedSwitch += 1;
-		}
 		/**
 		 * Soleniod Control using "A" button
 		 */
@@ -230,8 +221,10 @@ final public class Robot extends IterativeRobot {
 
 	public void shooterControl() {
 		if(gp2.RT_state || gp2.LT_state) {
-			intakeRoller.move(gp2.current.RT > 0,gp2.current.LT > 0);
-			intakeArmMotor.move(gp2.current.RT > 0, gp2.current.LT > 0);
+
+		    final double forwardValue = gp2.current.RT - gp2.current.LT;
+			intakeRoller.move(forwardValue > 0,forwardValue < 0);
+			intakeArmMotor.move(forwardValue > 0, forwardValue < 0);
 		}
 
 		if(gp2.dPadUp_state || gp2.dPadDown_state) {intakeSoleniod.move(gp2.current.dPadUp,gp2.current.dPadDown);}
@@ -240,7 +233,9 @@ final public class Robot extends IterativeRobot {
 			indexs.move(gp2.current.jLeftY > 0, gp2.current.jLeftY < 0);
 		}
 
-
+		if(gp2.jRightY_state) {
+            shooters.move(gp2.current.jRightY > 0, gp2.current.jRightY < 0);
+        }
 
 	}
 

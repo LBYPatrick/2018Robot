@@ -17,7 +17,7 @@ public class AutonChooser {
         chooser.addObject("Right",                          new AutonTimeBased(AutonTimeBased.Mode.Right));
         chooser.addObject("Left Straight+Cube",             new AutonTimeBased(AutonTimeBased.Mode.LSCube));
         chooser.addObject("Right Straight+Cube",            new AutonTimeBased(AutonTimeBased.Mode.RSCube));
-        chooser.addObject("L/R Pass Autoline(MoveOnly)",    new AutonTimeBased(AutonTimeBased.Mode.LRAutoline));
+        chooser.addObject("L/R Move Only",                  new AutonTimeBased(AutonTimeBased.Mode.LRAutoline));
         chooser.addObject("Middle Move Only",               new AutonTimeBased(AutonTimeBased.Mode.MiddleMove));
         chooser.addDefault("Automatic Move",                new AutonTimeBased(AutonTimeBased.Mode.AutoMove));
         SmartDashboard.putData("Auton Chooser", chooser);

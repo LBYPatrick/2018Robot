@@ -36,7 +36,8 @@ public class Statics {
     final static public int PDP_VRM2= 10;
     final static public int PDP_VRM3= 11;
 
-    final static public int XBOX_CTRL = 0;
+    final static public int XBOX_CTRL_1 = 0;
+    final static public int XBOX_CTRL_2 = 1;
 
     final static public double LOW_SPD_FACTOR = 0.5;
 

@@ -27,7 +27,7 @@ final public class Robot extends IterativeRobot {
 	private static boolean isSolenoidForward = true;
 	private SolenoidControl intakeSoleniod;
 	private MotorControl intakeArmMotor;
-	private MotorControl intakeRollers;
+	private MotorControl intakeRoller;
 	private MotorControl indexs;
 	private MotorControl shooters;
 	private PDP pdp;
@@ -59,8 +59,8 @@ final public class Robot extends IterativeRobot {
         if(!Statics.TEST_CHASSIS_MODE) {
 			intakeSoleniod = new SolenoidControl(Statics.INTAKE_SOLENOID_FORWARD, Statics.INTAKE_SOLENOID_REVERSE);
 			intakeArmMotor = new MotorControl(Statics.INTAKE_ARM_MOTORS, false);
-			intakeRollers  = new MotorControl(Statics.INTAKE_ROLLER_MOTORS,false);
-			intakeRollers.updateSpeedLimit(0.2);
+			intakeRoller  = new MotorControl(Statics.INTAKE_ROLLER_MOTORS,false);
+			intakeRoller.updateSpeedLimit(0.2);
 			indexs = new MotorControl(Statics.INDEX_MOTORS, false);
 			shooters = new MotorControl(Statics.SHOOTER_MOTORS, true);
 		}
@@ -120,7 +120,9 @@ final public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopPeriodic() {
-		this.teleopControl(true);
+		gp1.updateStatus();
+		gp2.updateStatus();
+		this.driveControl(true);
 	}
 
 
@@ -133,16 +135,14 @@ final public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		this.teleopControl(true);
+		this.driveControl(true);
 		if(Statics.DEBUG_MODE) {
 			this.postSensorData();
 			this.postPDPData();
 		}
 	}
 
-	public void teleopControl(boolean isNFSControl) {
-		gp1.updateStatus();
-		gp2.updateStatus();
+	public void driveControl(boolean isNFSControl) {
 
 		/**
 		 * Reverse Gear Trigger (Button Y, AKA "Triangle" in Dualshock 4)
@@ -157,14 +157,14 @@ final public class Robot extends IterativeRobot {
 		 *  Sniping Mode (First introduced for Team 11319 in FTC 2017 Relic Recovery)
 		 *  Use Right Bumper for toggling
 		 */
-		if(gp2.RB_state) {
+		if(gp1.RB_state) {
 			if(gp2.current.RB) isSNP = !isSNP;
 			speedFactor = isSNP ? Statics.LOW_SPD_FACTOR : Statics.FULL_SPD_FACTOR;
 
 			DriveTrain.updateSpeedLimit(speedFactor);
 			shooters.updateSpeedLimit(speedFactor);
 			intakeArmMotor.updateSpeedLimit(speedFactor);
-			intakeRollers.updateSpeedLimit(speedFactor);
+			intakeRoller.updateSpeedLimit(speedFactor);
 			indexs.updateSpeedLimit(speedFactor);
 			isForceUpdateNeeded = true;
 		}
@@ -182,7 +182,7 @@ final public class Robot extends IterativeRobot {
 					  break;
 			}
 
-			intakeRollers.updateSpeedLimit(speedFactor);
+			intakeRoller.updateSpeedLimit(speedFactor);
 
 			isForceUpdateNeeded = true;
 			
@@ -201,7 +201,7 @@ final public class Robot extends IterativeRobot {
 			if (gp1.dPad_state || isForceUpdateNeeded) {
 
 				intakeArmMotor.move(gp1.current.dPadDown, gp1.current.dPadUp);
-				intakeRollers.move(gp1.current.dPadDown, gp1.current.dPadUp);
+				intakeRoller.move(gp1.current.dPadDown, gp1.current.dPadUp);
 			}
 			if (gp1.X_state || isForceUpdateNeeded) {
 				indexs.move(gp1.current.X, false);
@@ -226,6 +226,22 @@ final public class Robot extends IterativeRobot {
 		}
 		
 		isForceUpdateNeeded = false;
+	}
+
+	public void shooterControl() {
+		if(gp2.RT_state || gp2.LT_state) {
+			intakeRoller.move(gp2.current.RT > 0,gp2.current.LT > 0);
+			intakeArmMotor.move(gp2.current.RT > 0, gp2.current.LT > 0);
+		}
+
+		if(gp2.dPadUp_state || gp2.dPadDown_state) {intakeSoleniod.move(gp2.current.dPadUp,gp2.current.dPadDown);}
+
+		if(gp2.jLeftY_state) {
+			indexs.move(gp2.current.jLeftY > 0, gp2.current.jLeftY < 0);
+		}
+
+
+
 	}
 
 	public void postSensorData() {

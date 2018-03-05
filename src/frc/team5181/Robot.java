@@ -186,7 +186,7 @@ final public class Robot extends IterativeRobot {
 		 */
 
 		//Let us drive an AE86 today, not the robot
-		if (gp1.X_state) {
+		if (gp1.X_state && gp1.current.X) {
 			DriveTrain.tankDrive(0,0);
 			isDriftMode = true;
 		}

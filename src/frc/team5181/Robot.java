@@ -20,6 +20,7 @@ import frc.team5181.autonomous.*;
 final public class Robot extends IterativeRobot {
 
     //Software
+
     private static boolean          isLinearAutonOK = false;
 	private static Task             autonCommand;
 	private static int              rFactor = 1;
@@ -191,12 +192,14 @@ final public class Robot extends IterativeRobot {
 		}
 		else if(!isNFSControl && (gp1.jLeftY_state || gp1.jRightX_state || isForceUpdateNeeded || isDriftMode)) {
 			DriveTrain.tankDrive(gp1.current.jRightX,rFactor*(gp1.current.jLeftY));
+			isDriftMode = false;
 		}
 		/**
 		 * NFS Drive Control (Might improve driving experience + less likely wearing out the gearboxes due to rapid speed change)
 		 */
 		else if(gp1.RT_state || gp1.LT_state || gp1.jLeftX_state || isForceUpdateNeeded || isDriftMode) {
 			DriveTrain.tankDrive(gp1.current.jLeftX*0.5, -rFactor*(gp1.current.RT-gp1.current.LT));
+			isDriftMode = false;
 		}
 		
 		isForceUpdateNeeded = false;

@@ -26,6 +26,7 @@ final public class Robot extends IterativeRobot {
     private static LSProfiler       pdpProfiler;
 	private static double           speedFactor = 1.0;
     private static boolean          isForceUpdateNeeded = false;
+    private static boolean          isDriftMode = false;
 	private static boolean          isRVSE = false; // Means "is Reverse Mode Triggered"
 	private static boolean          isSNP = false;  // Means "is Sniping Mode Triggered"
 
@@ -180,39 +181,21 @@ final public class Robot extends IterativeRobot {
 		}
 
 		/**
-		 * Soleniod Control using "A" button
-		 */
-		if(!Statics.TEST_CHASSIS_MODE) {
-			if (gp1.B_state || isForceUpdateNeeded) {
-				if (gp1.current.B) isSolenoidForward = !isSolenoidForward;
-
-				intakeSoleniod.move(isSolenoidForward, !isSolenoidForward);
-			}
-
-			if (gp1.dPad_state || isForceUpdateNeeded) {
-
-				intakeArmMotor.move(gp1.current.dPadDown, gp1.current.dPadUp);
-				intakeRoller.move(gp1.current.dPadDown, gp1.current.dPadUp);
-			}
-			if (gp1.X_state || isForceUpdateNeeded) {
-				indexs.move(gp1.current.X, false);
-			}
-
-			if (gp1.A_state || isForceUpdateNeeded) {
-				shooters.move(gp1.current.A, false);
-			}
-		}
-
-		/**
 		 *  RC Drive Control
 		 */
-		if(!isNFSControl && (gp1.jLeftY_state || gp1.jRightX_state || isForceUpdateNeeded)) {
+
+		//Let us drive an AE86 today, not the robot
+		if (gp1.X_state) {
+			DriveTrain.tankDrive(0,0);
+			isDriftMode = true;
+		}
+		else if(!isNFSControl && (gp1.jLeftY_state || gp1.jRightX_state || isForceUpdateNeeded || isDriftMode)) {
 			DriveTrain.tankDrive(gp1.current.jRightX,rFactor*(gp1.current.jLeftY));
 		}
 		/**
 		 * NFS Drive Control (Might improve driving experience + less likely wearing out the gearboxes due to rapid speed change)
 		 */
-		else if(gp1.RT_state || gp1.LT_state || gp1.jLeftX_state || isForceUpdateNeeded) {
+		else if(gp1.RT_state || gp1.LT_state || gp1.jLeftX_state || isForceUpdateNeeded || isDriftMode) {
 			DriveTrain.tankDrive(gp1.current.jLeftX*0.5, -rFactor*(gp1.current.RT-gp1.current.LT));
 		}
 		

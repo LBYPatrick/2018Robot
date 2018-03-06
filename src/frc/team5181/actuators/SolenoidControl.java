@@ -1,6 +1,7 @@
 package frc.team5181.actuators;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import frc.team5181.autonomous.AutonHelper;
 import edu.wpi.first.wpilibj.Compressor;
 
 public class SolenoidControl {
@@ -14,8 +15,14 @@ public class SolenoidControl {
     }
 
     public void move(boolean forward, boolean reverse) {
-        if((forward && reverse) || !(forward || reverse)) solenoid.set(DoubleSolenoid.Value.kOff);
-        else if (forward) solenoid.set(DoubleSolenoid.Value.kForward);
-        else solenoid.set(DoubleSolenoid.Value.kReverse);
+        if(forward == reverse) {solenoid.set(DoubleSolenoid.Value.kOff); AutonHelper.report("Soleniod Off");}
+        else if (forward) {solenoid.set(DoubleSolenoid.Value.kForward); AutonHelper.report("Solenoid Forward");}
+        else {solenoid.set(DoubleSolenoid.Value.kReverse);AutonHelper.report("Soleniod Reverse");}
+    }
+
+    @Override
+    public String toString() {
+        return "Pressure Status: " + (this.compressor.getPressureSwitchValue() ? "Good":"Too High")
+                + "\tCurrent: " + this.compressor.getCompressorCurrent() + "A";
     }
 }

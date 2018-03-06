@@ -8,11 +8,15 @@ import frc.team5181.pid.PIDSource;
  * Designed for Sharp Sensor, GP2Y0A41SK0F
  */
 public class IRSensor implements PIDSource {
-	public final double cutOffVoltage = 2.5;
+	private double cutOffVoltage = 2.5;
 	private AnalogInput analogInput;
 
 	public IRSensor(int channel) {
 		this.analogInput = new AnalogInput(channel);
+	}
+	public IRSensor(int channel, double cutOffVoltage) {
+		this(channel);
+		this.cutOffVoltage = cutOffVoltage;
 	}
 	
 	public double getRawVoltage() {
@@ -34,7 +38,7 @@ public class IRSensor implements PIDSource {
 	}
 
 	public boolean isTargetDetected(){
-		return this.analogInput.getAverageVoltage() >= cutOffVoltage;
+		return this.analogInput.getAverageVoltage() >= this.cutOffVoltage;
 	}
 
 	@Override

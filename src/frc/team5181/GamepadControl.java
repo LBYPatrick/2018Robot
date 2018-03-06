@@ -1,24 +1,24 @@
 package frc.team5181;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.team5181.sensors.LSProfiler;
 
-final public class Gamepad { //Why final? Because then Java would try to final every method it can, which is faster.
+final public class GamepadControl { //Why final? Because then Java would try to final every method it can, which is faster.
 
-    private static LSProfiler p = new LSProfiler("Gamepad");
-    private static boolean isDebug = false;
+    private LSProfiler p = new LSProfiler("Gamepad");
+    private boolean isDebug = false;
 
     public enum Mode {
         GAMEPAD,
         JOYSTICK
     }
 
-    public static void setDebugMode(boolean value) {isDebug = value;}
+    public void setDebugMode(boolean value) {isDebug = value;}
 
-    static public class ValueContainer {
+     public class ValueContainer {
         //Gamepad
         public int      dPad = -1;
         public double  jLeftX = 0,
@@ -87,21 +87,21 @@ final public class Gamepad { //Why final? Because then Java would try to final e
     //Variables
     //===================
 
-    public   static  ValueContainer       previous = new ValueContainer(),
+    public ValueContainer  previous = new ValueContainer(),
                                            current = new ValueContainer();
-    private  static  ValueContainer cleanContainer = new ValueContainer();
+    private ValueContainer cleanContainer = new ValueContainer();
 
-    private static Mode CONTROLLER_MODE;
-    private static int portNumber,
+    private  Mode CONTROLLER_MODE;
+    private  int portNumber,
                        xStickPort,
                        yStickPort,
                        triggerPort;
 
-    private static XboxController xGP;
-    private static Joystick jJS;
+    private  XboxController xGP;
+    private  Joystick jJS;
 
     //Gamepad
-    static public boolean jLeftX_state = false, 
+     public boolean jLeftX_state = false,
               jLeftY_state = false, 
               jRightX_state = false, 
               jRightY_state = false, 
@@ -138,13 +138,13 @@ final public class Gamepad { //Why final? Because then Java would try to final e
     //Methods
     //=============================
 
-    static public void init(int xboxPort) {
+     public GamepadControl(int xboxPort) {
         portNumber= xboxPort;
         CONTROLLER_MODE = Mode.GAMEPAD;
         xGP = new XboxController(portNumber);
     }
     
-    static public void init(int jStickPort, int xPort, int yPort, int trigPort) {
+     public GamepadControl(int jStickPort, int xPort, int yPort, int trigPort) {
 
         CONTROLLER_MODE = Mode.JOYSTICK;
         
@@ -156,13 +156,13 @@ final public class Gamepad { //Why final? Because then Java would try to final e
         jJS = new Joystick(portNumber);
     }
 
-    static public void reset() {
+     public void reset() {
         current.writeValue(cleanContainer);
         previous.writeValue(cleanContainer);
         updateStatus();
     }
 
-    static public void updateStatus() {
+     public void updateStatus() {
         if(isDebug) p.start();
         //Get Data
         switch(CONTROLLER_MODE) {

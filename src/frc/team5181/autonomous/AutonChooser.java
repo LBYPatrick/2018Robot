@@ -1,30 +1,29 @@
 package frc.team5181.autonomous;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team5181.tasking.ParallelTask;
-import frc.team5181.tasking.Task;
 
+/**
+ * Created by TylerLiu on 2017/03/04.
+ */
 public class AutonChooser {
 
-    private static SendableChooser<AutonMode> chooser = new SendableChooser<>();
+    public static SendableChooser<Runnable> chooser;
 
-    public static void addOption(String name,AutonMode obj) {
-        chooser.addObject(name,obj);
+    public static void chooserInit(){
+        chooser = new SendableChooser<>();
+        chooser.addObject("Left",                           new AutonTimeBased(AutonTimeBased.Mode.Left));
+        chooser.addObject("Middle",                         new AutonTimeBased(AutonTimeBased.Mode.Middle));
+        chooser.addObject("Right",                          new AutonTimeBased(AutonTimeBased.Mode.Right));
+        chooser.addObject("Left Straight+Cube",             new AutonTimeBased(AutonTimeBased.Mode.LSCube));
+        chooser.addObject("Right Straight+Cube",            new AutonTimeBased(AutonTimeBased.Mode.RSCube));
+        chooser.addObject("L/R Move Only",                  new AutonTimeBased(AutonTimeBased.Mode.LRAutoline));
+        chooser.addObject("Middle Move Only",               new AutonTimeBased(AutonTimeBased.Mode.MiddleMove));
+        chooser.addDefault("Automatic Move",                new AutonTimeBased(AutonTimeBased.Mode.AutoMove));
+        SmartDashboard.putData("Auton Chooser", chooser);
     }
 
-    public static void updateDashBoard() {
-        SmartDashboard.putData("AUTON_MODES",chooser);
-    }
-
-    public static AutonMode getSelected() {
+    public static Runnable getSelected() {
         return chooser.getSelected();
     }
-
-    public static void run(AutonMode autonMode) {
-        autonMode.init();
-        autonMode.run();
-    }
-
 }

@@ -1,7 +1,7 @@
 # FRC2018
 
-![wlop_pic](./resources/readme_pic.jpg)  
-Artist: [@wlop](https://space.bilibili.com/26633150?from=search&seid=22684713911764996#/)
+![readme_pic](./resources/readme_pic.jpg)  
+Artist: [@Bison仓鼠](https://www.pixiv.net/stacc/bisonbison)
 
 Team 5181's Code for FRC 2018 Power up
 

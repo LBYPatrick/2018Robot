@@ -1,19 +1,24 @@
 package frc.team5181.sensors;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-/**
- * Created by TylerLiu on 2017/03/14.
- */
-public class PDP {
-    //TODO the match current stat need to be check before competition for all the following year
-    public static PowerDistributionPanel pdp;
 
-    public static void init(){
-        pdp = new PowerDistributionPanel();
+public class PDP extends PowerDistributionPanel {
+
+    final private static int DEFAULT_CHANEL = 0;
+
+    public PDP(int channel) {
+        super(channel);
     }
-
-    public static void outputCurrents(){
-    	SmartDashboard.putData(pdp);
+    public PDP() {
+        super(DEFAULT_CHANEL);
+    }
+  
+    @Override
+    public double getTotalCurrent() {
+        double returnBuffer = 0;
+        for(int i = 0; i < 16; ++i) { //16 channels in total I guess ?!
+            returnBuffer += this.getCurrent(i);
+        }
+        return returnBuffer;
     }
 }

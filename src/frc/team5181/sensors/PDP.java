@@ -2,7 +2,6 @@ package frc.team5181.sensors;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
-
 public class PDP extends PowerDistributionPanel {
 
     final private static int DEFAULT_CHANEL = 0;
@@ -13,7 +12,7 @@ public class PDP extends PowerDistributionPanel {
     public PDP() {
         super(DEFAULT_CHANEL);
     }
-
+  
     @Override
     public double getTotalCurrent() {
         double returnBuffer = 0;

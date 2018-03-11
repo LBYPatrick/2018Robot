@@ -15,7 +15,7 @@ public class SolenoidControl {
     }
 
     public void move(boolean forward, boolean reverse) {
-        if(forward == reverse) {solenoid.set(DoubleSolenoid.Value.kOff); AutonHelper.report("Soleniod Off");}
+        if(forward == reverse) {return;}
         else if (forward) {solenoid.set(DoubleSolenoid.Value.kForward); AutonHelper.report("Solenoid Forward");}
         else {solenoid.set(DoubleSolenoid.Value.kReverse);AutonHelper.report("Soleniod Reverse");}
     }

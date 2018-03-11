@@ -132,6 +132,7 @@ final public class Robot extends IterativeRobot {
 		gp2.updateStatus();
 		this.driveControl(true);
 		this.shooterControl();
+		isForceUpdateNeeded = false;
 	}
 
 
@@ -145,12 +146,44 @@ final public class Robot extends IterativeRobot {
 	@Override
 	public void testPeriodic() {
         gp1.updateStatus();
-        gp2.updateStatus();
+		gp2.updateStatus();
+		this.speedControl();
 	    this.driveControl(true);
 	    this.shooterControl();
 		if(Statics.DEBUG_MODE) {
 			this.postSensorData();
 			this.postPDPData();
+		}
+		isForceUpdateNeeded = false;
+	}
+
+	public void speedControl() {
+		if(gp1.Y_state && gp1.current.Y) {
+			switch(speedSwitch) {
+				case 0 : speedFactor = 0.1;
+						 break;
+				case 1 : speedFactor = 0.3;
+						 break;
+				case 2 : speedFactor = 0.5;
+						 break;
+				case 3 : speedFactor = 0.7;
+						 break;
+				case 4 : speedFactor = 0.9;
+						 break;
+				case 5:  speedFactor = 1.0;
+						 break;		 	
+				default: speedFactor = 0.1;
+						 speedFactor = -1;	 	 		 		 		 
+			}
+
+			DriveTrain.     updateSpeedLimit(speedFactor);
+			shooters.       updateSpeedLimit(speedFactor);
+			intakeArmMotor. updateSpeedLimit(speedFactor);
+			intakeRoller.   updateSpeedLimit(speedFactor);
+			indexs.         updateSpeedLimit(speedFactor);
+
+			speedSwitch += 1;
+			isForceUpdateNeeded = true;
 		}
 	}
 
@@ -202,24 +235,25 @@ final public class Robot extends IterativeRobot {
 			isDriftMode = false;
 		}
 		
-		isForceUpdateNeeded = false;
 	}
 
 	public void shooterControl() {
-		if(gp2.RT_state || gp2.LT_state) {
+		if(gp2.RT_state || gp2.LT_state || isForceUpdateNeeded) {
 
 		    final double forwardValue = gp2.current.RT - gp2.current.LT;
 			intakeRoller.move(forwardValue > 0,forwardValue < 0);
 			intakeArmMotor.move(forwardValue > 0, forwardValue < 0);
 		}
 
-		if(gp2.dPadUp_state || gp2.dPadDown_state) {intakeSoleniod.move(gp2.current.dPadUp,gp2.current.dPadDown);}
+		if(gp2.dPadUp_state || gp2.dPadDown_state || isForceUpdateNeeded) {
+			intakeSoleniod.move(gp2.current.dPadUp,gp2.current.dPadDown);
+		}
 
-		if(gp2.jLeftY_state) {
+		if(gp2.jLeftY_state || isForceUpdateNeeded) {
 			indexs.move(gp2.current.jLeftY > 0, gp2.current.jLeftY < 0);
 		}
 
-		if(gp2.jRightY_state) {
+		if(gp2.jRightY_state || isForceUpdateNeeded) {
             shooters.move(gp2.current.jRightY > 0, gp2.current.jRightY < 0);
         }
 

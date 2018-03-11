@@ -130,6 +130,7 @@ final public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		gp1.updateStatus();
 		gp2.updateStatus();
+		this.speedControl();
 		this.driveControl(true);
 		this.shooterControl();
 		isForceUpdateNeeded = false;

@@ -190,6 +190,15 @@ final public class Robot extends IterativeRobot {
 
 	public void driveControl(boolean isNFSControl) {
 
+		//Let us drive an AE86 today, not the robot
+		if (gp1.X_state && gp1.current.X) {
+			DriveTrain.tankDrive(0,0);
+			isDriftMode = true;
+		}
+		else if(!isNFSControl && (gp1.jLeftY_state || gp1.jRightX_state || isForceUpdateNeeded || isDriftMode)) {
+			DriveTrain.tankDrive(gp1.current.jRightX,rFactor*(gp1.current.jLeftY));
+			isDriftMode = false;
+		}
 		/**
 		 * Reverse Gear Trigger (Button Y, AKA "Triangle" in Dualshock 4)
 		 */

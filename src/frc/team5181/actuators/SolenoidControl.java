@@ -15,7 +15,7 @@ public class SolenoidControl {
     }
 
     public void move(boolean forward, boolean reverse) {
-        if(forward == reverse) {return;}
+        if(forward == reverse) {return;} //Ignore input if both buttons are held / released
         else if (forward) {solenoid.set(DoubleSolenoid.Value.kForward); AutonHelper.report("Solenoid Forward");}
         else {solenoid.set(DoubleSolenoid.Value.kReverse);AutonHelper.report("Soleniod Reverse");}
     }

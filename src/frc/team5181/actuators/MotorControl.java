@@ -13,6 +13,7 @@ public class MotorControl {
     private double speedLimit = 1.0;
     private Model model;
     public static Model DEFAULT_MODEL = Model.VICTOR_SP;
+    public static boolean isAnQuanMoShi = true;
 
     public MotorControl (int port) {
         this(port, DEFAULT_MODEL);
@@ -51,7 +52,7 @@ public class MotorControl {
 
 
     public void move(double value) {
-        this.motor.set(value*speedLimit);
+        if(!isAnQuanMoShi) this.motor.set(value*speedLimit);
     }
 
     public void move(boolean forward, boolean reverse) {

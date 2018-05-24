@@ -1,0 +1,16 @@
+image: java:8-jdk
+
+stages:
+    - build
+
+build:
+    stage: build
+    script: 
+        - wget --output-document="/ant.zip" http://archive.apache.org/dist/ant/ant-current-bin.zip
+        - unzip -q /ant.zip -d /
+        - mv /apache-ant* /ant
+        - /ant/bin/ant -find compile.xml
+    artifacts:
+        paths:
+            - build/*
+        expire_in: 2 days

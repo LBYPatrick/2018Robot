@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="FRC Complie" default="compile">
+
+  <!--
+  The following properties can be defined to override system level
+  settings. These should not be touched unless you know what you're
+  doing. The primary use is to override the wpilib version when
+  working with older robots that can't compile with the latest
+  libraries.
+  -->
+
+  <!-- By default the system version of WPI is used -->
+  <!-- <property name="version" value=""/> -->
+
+  <!-- By default the system team number is used -->
+  <!-- <property name="team-number" value=""/> -->
+
+  <!-- By default the target is set to 10.TE.AM.2 -->
+  <!-- <property name="target" value=""/> -->
+
+  <!-- Any other property in build.properties can also be overridden. -->
+  
+  <property name="dir.dist" location="dist" />
+  <property name="dir.src" location="src" />
+  <property name="dir.lib" location="lib" />
+
+  <path id="classpath">
+    <fileset dir="${dir.lib}">
+      <include name="**/*.jar" />
+    </fileset>
+    <pathelement location="${dir.dist}" />
+  </path>
+  
+  <target name="compile" description="Compile the source code.">
+    <mkdir dir="${dir.dist}"/>
+    <javac 
+      srcdir="${dir.src}"
+      destdir="${dir.dist}"
+      includeAntRuntime="no"
+      includeJavaRuntime="no"
+      classpathref="classpath"
+      target="8"
+      source="8"
+      compiler="javac${ant.java.version}"
+      verbose="true"
+      debug="true"
+    />
+  </target>
+
+  <target name="test" depends="compile">
+    <junit>
+      <classpath refid="classpath" />
+      <formatter type="brief" usefile="false" />
+      <batchtest>
+        <fileset dir="${dir.src}">
+          <include name="test/**/*.java" />
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+</project>

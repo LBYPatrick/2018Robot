@@ -77,10 +77,9 @@ final public class Robot extends IterativeRobot {
 
 
         if(Statics.DEBUG_MODE) {
+        	DriverStation.reportWarning("DEBUG", false);
         	pdpProfiler = new LSProfiler("PDP-SmartDashboard");
         	AutonHelper.isOutputEnabled = true;
-        	gp1.setDebugMode(true);
-        	gp2.setDebugMode(true);
 
 		}
 
@@ -136,7 +135,7 @@ final public class Robot extends IterativeRobot {
 		gp2.updateStatus();
 		this.speedControl();
 		this.driveControl();
-		if(!Statics.TEST_CHASSIS_MODE) this.shooterControl();
+		this.shooterControl();
 		isForceUpdateNeeded = false;
 	}
 
@@ -185,24 +184,8 @@ final public class Robot extends IterativeRobot {
 			}
 
 			DriveTrain.     updateSpeedLimit(speedFactor);
-			shooters.       updateSpeedLimit(speedFactor);
-			intakeArmMotor. updateSpeedLimit(speedFactor);
-			intakeRoller.   updateSpeedLimit(speedFactor);
-			indexs.         updateSpeedLimit(speedFactor);
 
 			speedSwitch += 1;
-			isForceUpdateNeeded = true;
-		}
-
-		/**
-		 * Custom 2-level intake arm motor speed control
-		 */
-		if(gp2.isKeyToggled(GamepadB.A)) {
-			intakeArmMotor.updateSpeedLimit(0.5);
-			isForceUpdateNeeded = true;
-		}
-		else if (gp2.isKeyToggled(GamepadB.B)) {
-			intakeArmMotor.updateSpeedLimit(1.0);
 			isForceUpdateNeeded = true;
 		}
 	}
@@ -269,8 +252,8 @@ final public class Robot extends IterativeRobot {
 		/**
 		 * DPad up for toggling pneumatics
 		 */
-
-		if(gp2.isKeyToggled(GamepadB.dPadUp) || isForceUpdateNeeded) {
+		
+		if(gp2.isKeyToggled(GamepadB.dPadUp)) {
 			isSoleniodForward = !isSoleniodForward;
 			intakeSoleniod.move(isSoleniodForward,!isSoleniodForward);
 		}
@@ -286,6 +269,17 @@ final public class Robot extends IterativeRobot {
 		if(gp2.isKeyChanged(GamepadB.jRightY) || isForceUpdateNeeded) {
             shooters.move(gp2.getValue(GamepadB.jRightY) > 0.1, gp2.getValue(GamepadB.jRightY) < -0.1);
         }
+		
+		if(gp2.isKeyChanged(GamepadB.A) || gp2.isKeyChanged(GamepadB.B)) {
+			if(gp2.isKeyHeld(GamepadB.A)) {
+				shooters.move(true,false);
+				indexs.move(true,false);
+			}
+			if(gp2.isKeyHeld(GamepadB.B)) {
+				shooters.move(false,true);
+				indexs.move(false,true);
+			}
+		}
 
 
 	}

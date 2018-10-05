@@ -10,8 +10,9 @@ public class SolenoidControl {
     DoubleSolenoid solenoid;
 
     public SolenoidControl(int soleniodForwardPort, int solenoidReversePort) {
-        this.compressor = new Compressor();
-        this.solenoid = new DoubleSolenoid(soleniodForwardPort, solenoidReversePort);
+        compressor = new Compressor();
+        solenoid = new DoubleSolenoid(0,soleniodForwardPort, solenoidReversePort);
+        solenoid.set(DoubleSolenoid.Value.kForward);
     }
 
     public void move(boolean forward, boolean reverse) {
